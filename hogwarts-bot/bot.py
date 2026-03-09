@@ -5790,11 +5790,18 @@ class BackToQuestsButton(Button):
     async def callback(self, interaction: discord.Interaction):
         await show_quests_menu(interaction, self.user_id)
        
-        # ==========================================
+       # ==========================================
 # RUN THE BOT
 # ==========================================
 if __name__ == "__main__":
-    token = input("Enter your Discord bot token: ").strip()
+    # Use environment variable for token (safer for hosting)
+    import os
+    token = os.environ.get('DISCORD_TOKEN')
+    
+    if not token:
+        # Fallback to manual input if no env var (for local testing)
+        token = input("Enter your Discord bot token: ").strip()
+    
     if token:
         try:
             bot.run(token)
