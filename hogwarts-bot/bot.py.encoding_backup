@@ -1,7 +1,5 @@
-﻿import asyncio
-import sys
-from discord import app_commands
-import discord
+﻿import discord
+import asyncio 
 from discord.ext import commands, tasks
 from discord import app_commands
 from discord.ui import Button, View, Select, Modal, TextInput
@@ -9,14 +7,14 @@ import json
 import os
 from datetime import datetime, timedelta
 import random
-import asyncio
 from typing import Optional
 import math
 from collections import defaultdict
 import aiohttp
 from io import BytesIO
 import time
-time.sleep(10)  # Wait 10 seconds before connecting to avoid rate limits
+import sys
+import traceback
 
 # ==========================================
 # BACKGROUND TASKS DEFINITIONS
@@ -142,15 +140,15 @@ async def on_ready():
     # CRITICAL: Add delay to prevent rate limiting on restart
     await asyncio.sleep(5)
     
-    print(f'✅ {bot.user} is online!')
-    print(f'📊 Connected to {len(bot.guilds)} servers')
+    print(f'âœ… {bot.user} is online!')
+    print(f'ðŸ“Š Connected to {len(bot.guilds)} servers')
     
     # Sync slash commands
     try:
         synced = await bot.tree.sync()
-        print(f"🔄 Synced {len(synced)} slash commands!")
+        print(f"ðŸ”„ Synced {len(synced)} slash commands!")
     except Exception as e:
-        print(f"❌ Error syncing commands: {e}")
+        print(f"âŒ Error syncing commands: {e}")
     
     # Start background tasks
     try:
@@ -173,9 +171,9 @@ async def on_ready():
             check_brewing_potions.start()
         if 'check_quest_expiry' in dir():
             check_quest_expiry.start()
-        print("✅ Background tasks started!")
+        print("âœ… Background tasks started!")
     except Exception as e:
-        print(f"⚠️ Error starting tasks: {e}")
+        print(f"âš ï¸ Error starting tasks: {e}")
     
     # Set status
     try:
@@ -185,9 +183,9 @@ async def on_ready():
                 name="Hogwarts | /help"
             )
         )
-        print("✅ Status updated!")
+        print("âœ… Status updated!")
     except Exception as e:
-        print(f"⚠️ Error setting status: {e}")
+        print(f"âš ï¸ Error setting status: {e}")
 # ==========================================
 # CONSTANTS & CONFIG
 # ==========================================
@@ -195,11 +193,11 @@ DATA_FILE = 'data/bot_data.json'
 
 HOUSE_DATA = {
     'gryffindor': {
-        'name': 'Gryffindor', 'color': 0x740001, 'emoji': '🦁',
+        'name': 'Gryffindor', 'color': 0x740001, 'emoji': 'ðŸ¦',
         'founder': 'Godric Gryffindor', 'animal': 'Lion', 'element': 'Fire',
         'ghost': 'Nearly Headless Nick', 'common_room': 'Gryffindor Tower',
         'traits': ['Bravery', 'Courage', 'Nerve', 'Chivalry', 'Daring'],
-        'mascot': '🦁', 'colors': ['Scarlet', 'Gold'],
+        'mascot': 'ðŸ¦', 'colors': ['Scarlet', 'Gold'],
         'welcome_message': "You might belong in Gryffindor, Where dwell the brave at heart!",
         'image_url': 'https://i.imgur.com/8lY7qUu.png',
         'password': 'courage', 'secret_passage': 'Behind the portrait of the Fat Lady',
@@ -207,11 +205,11 @@ HOUSE_DATA = {
         'famous_members': ['Harry Potter', 'Hermione Granger', 'Ron Weasley', 'Albus Dumbledore']
     },
     'slytherin': {
-        'name': 'Slytherin', 'color': 0x1a472a, 'emoji': '🐍',
+        'name': 'Slytherin', 'color': 0x1a472a, 'emoji': 'ðŸ',
         'founder': 'Salazar Slytherin', 'animal': 'Serpent', 'element': 'Water',
         'ghost': 'Bloody Baron', 'common_room': 'Slytherin Dungeon',
         'traits': ['Ambition', 'Cunning', 'Leadership', 'Resourcefulness', 'Determination'],
-        'mascot': '🐍', 'colors': ['Green', 'Silver'],
+        'mascot': 'ðŸ', 'colors': ['Green', 'Silver'],
         'welcome_message': "Or perhaps in Slytherin, You'll make your real friends!",
         'image_url': 'https://i.imgur.com/8lY7qUu.png',
         'password': 'ambition', 'secret_passage': 'Through the dungeons behind a tapestry',
@@ -219,11 +217,11 @@ HOUSE_DATA = {
         'famous_members': ['Severus Snape', 'Draco Malfoy', 'Tom Riddle', 'Horace Slughorn']
     },
     'ravenclaw': {
-        'name': 'Ravenclaw', 'color': 0x0e1a40, 'emoji': '🦅',
+        'name': 'Ravenclaw', 'color': 0x0e1a40, 'emoji': 'ðŸ¦…',
         'founder': 'Rowena Ravenclaw', 'animal': 'Eagle', 'element': 'Air',
         'ghost': 'Grey Lady', 'common_room': 'Ravenclaw Tower',
         'traits': ['Wit', 'Learning', 'Wisdom', 'Creativity', 'Intelligence'],
-        'mascot': '🦅', 'colors': ['Blue', 'Bronze'],
+        'mascot': 'ðŸ¦…', 'colors': ['Blue', 'Bronze'],
         'welcome_message': "Or yet in wise old Ravenclaw, If you've a ready mind!",
         'image_url': 'https://i.imgur.com/8lY7qUu.png',
         'password': 'wit', 'secret_passage': 'Behind a bookshelf in the library',
@@ -231,11 +229,11 @@ HOUSE_DATA = {
         'famous_members': ['Luna Lovegood', 'Cho Chang', 'Gilderoy Lockhart', 'Sybill Trelawney']
     },
     'hufflepuff': {
-        'name': 'Hufflepuff', 'color': 0xecb939, 'emoji': '🦡',
+        'name': 'Hufflepuff', 'color': 0xecb939, 'emoji': 'ðŸ¦¡',
         'founder': 'Helga Hufflepuff', 'animal': 'Badger', 'element': 'Earth',
         'ghost': 'Fat Friar', 'common_room': 'Hufflepuff Basement',
         'traits': ['Loyalty', 'Patience', 'Dedication', 'Fair Play', 'Hard Work'],
-        'mascot': '🦡', 'colors': ['Yellow', 'Black'],
+        'mascot': 'ðŸ¦¡', 'colors': ['Yellow', 'Black'],
         'welcome_message': "For Hufflepuff, hard workers were Most worthy of admission!",
         'image_url': 'https://i.imgur.com/8lY7qUu.png',
         'password': 'loyalty', 'secret_passage': 'Near the kitchens behind a barrel',
@@ -245,10 +243,10 @@ HOUSE_DATA = {
 }
 
 SPELL_QUOTES = [
-    "Wingardium Leviosa! ✨", "Expecto Patronum! 🪄", "Lumos! 💡",
-    "Nox! 🌙", "Alohomora! 🔓", "Accio! 🪄", "Stupefy! ⚡",
-    "Expelliarmus! 🛡️", "Riddikulus! 😂", "Obliviate! 🌀",
-    "Sectumsempra! 🔪", "Crucio! 💢", "Imperio! 👁️", "Avada Kedavra! 💀"
+    "Wingardium Leviosa! âœ¨", "Expecto Patronum! ðŸª„", "Lumos! ðŸ’¡",
+    "Nox! ðŸŒ™", "Alohomora! ðŸ”“", "Accio! ðŸª„", "Stupefy! âš¡",
+    "Expelliarmus! ðŸ›¡ï¸", "Riddikulus! ðŸ˜‚", "Obliviate! ðŸŒ€",
+    "Sectumsempra! ðŸ”ª", "Crucio! ðŸ’¢", "Imperio! ðŸ‘ï¸", "Avada Kedavra! ðŸ’€"
 ]
 
 # ==========================================
@@ -257,7 +255,7 @@ SPELL_QUOTES = [
 WANDS = {
     'phoenix': {
         'name': 'Phoenix Feather Wand', 'price': 500, 'power': 50,
-        'description': 'Very powerful, chooses the worthy', 'emoji': '🔥',
+        'description': 'Very powerful, chooses the worthy', 'emoji': 'ðŸ”¥',
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0xff6b6b,
         'rarity': 'legendary', 'spells': ['Expecto Patronum', 'Phoenix Song', 'Rebirth'],
         'bonus': '+20% spell power on weekends', 'core': 'Phoenix Feather',
@@ -266,7 +264,7 @@ WANDS = {
     },
     'dragon': {
         'name': 'Dragon Heartstring Wand', 'price': 400, 'power': 40,
-        'description': 'Powerful and loyal', 'emoji': '🐉',
+        'description': 'Powerful and loyal', 'emoji': 'ðŸ‰',
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0xff4444,
         'rarity': 'rare', 'spells': ['Fiendfyre', 'Dragon Breath', 'Firestorm'],
         'bonus': '+15% power in duels', 'core': 'Dragon Heartstring',
@@ -275,7 +273,7 @@ WANDS = {
     },
     'unicorn': {
         'name': 'Unicorn Hair Wand', 'price': 300, 'power': 30,
-        'description': 'Consistent and pure magic', 'emoji': '🦄',
+        'description': 'Consistent and pure magic', 'emoji': 'ðŸ¦„',
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0xff99cc,
         'rarity': 'rare', 'spells': ['Healing Touch', 'Purify', 'Light Shield'],
         'bonus': '+10% healing effects', 'core': 'Unicorn Hair',
@@ -284,7 +282,7 @@ WANDS = {
     },
     'thestral': {
         'name': 'Thestral Hair Wand', 'price': 450, 'power': 45,
-        'description': 'Only the worthy can wield', 'emoji': '🐴',
+        'description': 'Only the worthy can wield', 'emoji': 'ðŸ´',
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0x2c3e50,
         'rarity': 'legendary', 'spells': ['Death Sight', 'Shadow Walk', 'Soul Bond'],
         'bonus': '+25% stealth', 'core': 'Thestral Hair',
@@ -293,7 +291,7 @@ WANDS = {
     },
     'veela': {
         'name': 'Veela Hair Wand', 'price': 350, 'power': 35,
-        'description': 'Temperamental but powerful', 'emoji': '💇‍♀️',
+        'description': 'Temperamental but powerful', 'emoji': 'ðŸ’‡â€â™€ï¸',
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0xff69b4,
         'rarity': 'rare', 'spells': ['Charm', 'Allure', 'Emotion Control'],
         'bonus': '+15% charm spells', 'core': 'Veela Hair',
@@ -302,7 +300,7 @@ WANDS = {
     },
     'basilisk': {
         'name': 'Basilisk Horn Wand', 'price': 600, 'power': 60,
-        'description': 'Extremely rare and dangerous', 'emoji': '🐍',
+        'description': 'Extremely rare and dangerous', 'emoji': 'ðŸ',
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0x2ecc71,
         'rarity': 'mythic', 'spells': ['Petrify', 'Venom Strike', 'Serpent Speech'],
         'bonus': '+30% dark magic', 'core': 'Basilisk Horn',
@@ -311,7 +309,7 @@ WANDS = {
     },
     'elder': {
         'name': 'Elder Wand', 'price': 10000, 'power': 100,
-        'description': 'The Deathstick, most powerful wand ever', 'emoji': '👑',
+        'description': 'The Deathstick, most powerful wand ever', 'emoji': 'ðŸ‘‘',
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0x000000,
         'rarity': 'mythic', 'spells': ['ALL SPELLS', 'Death Magic', 'Immortality'],
         'bonus': '+100% all magic', 'core': 'Thestral Tail Hair',
@@ -326,7 +324,7 @@ WANDS = {
 PETS = {
     'owl': {
         'name': 'Snowy Owl', 'price': 200, 'bonus': '+10 daily check-in',
-        'emoji': '🦉', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
+        'emoji': 'ðŸ¦‰', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
         'color': 0xecf0f1, 'rarity': 'common', 'ability': 'Delivers mail, finds secrets',
         'hunger': 10, 'happiness': 80, 'special': 'Can find hidden items',
         'food': ['Mouse', 'Fish', 'Owl Treats'], 'max_hunger': 100,
@@ -334,7 +332,7 @@ PETS = {
     },
     'cat': {
         'name': 'Kneazle Cat', 'price': 150, 'bonus': '+5 defense',
-        'emoji': '🐱', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
+        'emoji': 'ðŸ±', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
         'color': 0xf39c12, 'rarity': 'common', 'ability': 'Detects danger, loyal companion',
         'hunger': 15, 'happiness': 90, 'special': 'Warns of untrustworthy people',
         'food': ['Fish', 'Cat Food', 'Milk'], 'max_hunger': 100,
@@ -342,7 +340,7 @@ PETS = {
     },
     'toad': {
         'name': 'Giant Toad', 'price': 100, 'bonus': '+5 luck',
-        'emoji': '🐸', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
+        'emoji': 'ðŸ¸', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
         'color': 0x27ae60, 'rarity': 'common', 'ability': 'Brings good fortune',
         'hunger': 5, 'happiness': 70, 'special': 'Can jump really high',
         'food': ['Flies', 'Worms', 'Toad Treats'], 'max_hunger': 100,
@@ -350,7 +348,7 @@ PETS = {
     },
     'rat': {
         'name': 'Pettigrew\'s Rat', 'price': 50, 'bonus': '+10 stealth',
-        'emoji': '🐀', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
+        'emoji': 'ðŸ€', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
         'color': 0x7f8c8d, 'rarity': 'common', 'ability': 'Sneaky, finds hidden things',
         'hunger': 20, 'happiness': 60, 'special': 'Can transform (sometimes)',
         'food': ['Cheese', 'Grains', 'Rat Treats'], 'max_hunger': 100,
@@ -358,7 +356,7 @@ PETS = {
     },
     'phoenix': {
         'name': 'Baby Phoenix', 'price': 1000, 'bonus': '+50 to everything',
-        'emoji': '🔥', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
+        'emoji': 'ðŸ”¥', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
         'color': 0xe74c3c, 'rarity': 'mythic', 'ability': 'Rebirth, healing tears',
         'hunger': 30, 'happiness': 100, 'special': 'Can resurrect once',
         'food': ['Phoenix Tears', 'Sunlight', 'Magic Dust'], 'max_hunger': 100,
@@ -366,7 +364,7 @@ PETS = {
     },
     'dragon': {
         'name': 'Dragon Hatchling', 'price': 2000, 'bonus': '+100 power',
-        'emoji': '🐉', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
+        'emoji': 'ðŸ‰', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
         'color': 0xc0392b, 'rarity': 'legendary', 'ability': 'Breathes fire, flies fast',
         'hunger': 50, 'happiness': 85, 'special': 'Can be ridden in Quidditch',
         'food': ['Meat', 'Coal', 'Dragon Treats'], 'max_hunger': 100,
@@ -374,7 +372,7 @@ PETS = {
     },
        'hippogriff': {
         'name': 'Hippogriff', 'price': 1500, 'bonus': '+75 flying',
-        'emoji': '🦅',  # Use just the eagle emoji
+        'emoji': 'ðŸ¦…',  # Use just the eagle emoji
         'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0xd35400,
         'rarity': 'legendary', 'ability': 'Fly anywhere, proud creature',
         'hunger': 40, 'happiness': 95, 'special': 'Must bow first',
@@ -383,7 +381,7 @@ PETS = {
     },
     'house_elf': {
         'name': 'House Elf', 'price': 800, 'bonus': '+30 chores',
-        'emoji': '🧦', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
+        'emoji': 'ðŸ§¦', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
         'color': 0x16a085, 'rarity': 'rare', 'ability': 'Cleans, cooks, apparates',
         'hunger': 20, 'happiness': 70, 'special': 'Can get you socks!',
         'food': ['House Elf Food', 'Socks', 'Freedom'], 'max_hunger': 100,
@@ -395,7 +393,7 @@ PETS = {
 # ==========================================
 CHEST_REWARDS = {
     'common': {
-        'name': '📦 Common Chest', 'price': 100, 'color': 0x95a5a6,
+        'name': 'ðŸ“¦ Common Chest', 'price': 100, 'color': 0x95a5a6,
         'rewards': [
             {'type': 'points', 'min': 10, 'max': 50, 'chance': 50},
             {'type': 'xp', 'min': 20, 'max': 100, 'chance': 30},
@@ -405,7 +403,7 @@ CHEST_REWARDS = {
         'guaranteed': {'item': 'Chocolate Frog', 'chance': 5}
     },
     'rare': {
-        'name': '🎁 Rare Chest', 'price': 250, 'color': 0x3498db,
+        'name': 'ðŸŽ Rare Chest', 'price': 250, 'color': 0x3498db,
         'rewards': [
             {'type': 'points', 'min': 50, 'max': 200, 'chance': 40},
             {'type': 'xp', 'min': 100, 'max': 500, 'chance': 35},
@@ -415,7 +413,7 @@ CHEST_REWARDS = {
         'guaranteed': {'item': 'Rare Core', 'chance': 10}
     },
     'legendary': {
-        'name': '👑 Legendary Chest', 'price': 500, 'color': 0xf1c40f,
+        'name': 'ðŸ‘‘ Legendary Chest', 'price': 500, 'color': 0xf1c40f,
         'rewards': [
             {'type': 'points', 'min': 200, 'max': 500, 'chance': 30},
             {'type': 'xp', 'min': 500, 'max': 1000, 'chance': 30},
@@ -425,7 +423,7 @@ CHEST_REWARDS = {
         'guaranteed': {'item': 'Legendary Shard', 'chance': 15}
     },
     'mythic': {
-        'name': '✨ Mythic Chest', 'price': 1000, 'color': 0x9b59b6,
+        'name': 'âœ¨ Mythic Chest', 'price': 1000, 'color': 0x9b59b6,
         'rewards': [
             {'type': 'points', 'min': 500, 'max': 1000, 'chance': 25},
             {'type': 'xp', 'min': 1000, 'max': 2000, 'chance': 25},
@@ -442,70 +440,70 @@ CHEST_REWARDS = {
 QUESTS = {
     # Daily Quests (repeatable)
     'daily_checkin': {
-        'name': '📅 Daily Ritual',
+        'name': 'ðŸ“… Daily Ritual',
         'description': 'Check in to Hogwarts for 3 days in a row',
         'type': 'checkin_streak',
         'target': 3,
         'reward_points': 50,
         'reward_xp': 100,
         'reward_items': ['Chocolate Frog'],
-        'emoji': '📅',
+        'emoji': 'ðŸ“…',
         'difficulty': 'easy',
         'repeatable': True,
         'time_limit': 24,  # hours
         'category': 'daily'
     },
     'daily_duel': {
-        'name': '⚔️ Daily Duelist',
+        'name': 'âš”ï¸ Daily Duelist',
         'description': 'Win 2 duels today',
         'type': 'duel_wins',
         'target': 2,
         'reward_points': 75,
         'reward_xp': 150,
         'reward_items': ['Duel Trophy'],
-        'emoji': '⚔️',
+        'emoji': 'âš”ï¸',
         'difficulty': 'medium',
         'repeatable': True,
         'time_limit': 24,
         'category': 'daily'
     },
     'daily_quidditch': {
-        'name': '🧹 Quidditch Practice',
+        'name': 'ðŸ§¹ Quidditch Practice',
         'description': 'Play 3 games of Quidditch',
         'type': 'quidditch_games',
         'target': 3,
         'reward_points': 60,
         'reward_xp': 120,
         'reward_items': ['Broom Polish'],
-        'emoji': '🧹',
+        'emoji': 'ðŸ§¹',
         'difficulty': 'easy',
         'repeatable': True,
         'time_limit': 24,
         'category': 'daily'
     },
     'daily_trivia': {
-        'name': '📚 Trivia Master',
+        'name': 'ðŸ“š Trivia Master',
         'description': 'Answer 5 trivia questions correctly',
         'type': 'trivia_wins',
         'target': 5,
         'reward_points': 80,
         'reward_xp': 160,
         'reward_items': ['Spell Scroll'],
-        'emoji': '📚',
+        'emoji': 'ðŸ“š',
         'difficulty': 'medium',
         'repeatable': True,
         'time_limit': 24,
         'category': 'daily'
     },
     'daily_points': {
-        'name': '💰 Point Collector',
+        'name': 'ðŸ’° Point Collector',
         'description': 'Earn 100 points for your house',
         'type': 'points_earned',
         'target': 100,
         'reward_points': 40,
         'reward_xp': 80,
         'reward_items': ['Magic Coin'],
-        'emoji': '💰',
+        'emoji': 'ðŸ’°',
         'difficulty': 'easy',
         'repeatable': True,
         'time_limit': 24,
@@ -514,70 +512,70 @@ QUESTS = {
     
     # Weekly Quests (repeatable weekly)
     'weekly_house_champion': {
-        'name': '🏆 House Champion',
+        'name': 'ðŸ† House Champion',
         'description': 'Earn 500 points for your house this week',
         'type': 'weekly_points',
         'target': 500,
         'reward_points': 200,
         'reward_xp': 500,
         'reward_items': ['House Trophy', 'Rare Core'],
-        'emoji': '🏆',
+        'emoji': 'ðŸ†',
         'difficulty': 'hard',
         'repeatable': True,
         'time_limit': 168,
         'category': 'weekly'
     },
     'weekly_duel_champion': {
-        'name': '⚔️ Duel Champion',
+        'name': 'âš”ï¸ Duel Champion',
         'description': 'Win 10 duels this week',
         'type': 'weekly_duels',
         'target': 10,
         'reward_points': 250,
         'reward_xp': 600,
         'reward_items': ['Duelist Medal', 'Rare Wand'],
-        'emoji': '⚔️',
+        'emoji': 'âš”ï¸',
         'difficulty': 'hard',
         'repeatable': True,
         'time_limit': 168,
         'category': 'weekly'
     },
     'weekly_quidditch_star': {
-        'name': '🧹 Quidditch Star',
+        'name': 'ðŸ§¹ Quidditch Star',
         'description': 'Score 500 points in Quidditch',
         'type': 'weekly_quidditch',
         'target': 500,
         'reward_points': 200,
         'reward_xp': 500,
         'reward_items': ['Golden Snitch', 'Broom Upgrade'],
-        'emoji': '🧹',
+        'emoji': 'ðŸ§¹',
         'difficulty': 'hard',
         'repeatable': True,
         'time_limit': 168,
         'category': 'weekly'
     },
     'weekly_trivia_legend': {
-        'name': '📚 Trivia Legend',
+        'name': 'ðŸ“š Trivia Legend',
         'description': 'Answer 25 trivia questions correctly',
         'type': 'weekly_trivia',
         'target': 25,
         'reward_points': 225,
         'reward_xp': 550,
         'reward_items': ['Ancient Tome', 'Wisdom Scroll'],
-        'emoji': '📚',
+        'emoji': 'ðŸ“š',
         'difficulty': 'hard',
         'repeatable': True,
         'time_limit': 168,
         'category': 'weekly'
     },
     'weekly_explorer': {
-        'name': '🗺️ Master Explorer',
+        'name': 'ðŸ—ºï¸ Master Explorer',
         'description': 'Visit 10 different locations on the Marauder\'s Map',
         'type': 'weekly_locations',
         'target': 10,
         'reward_points': 175,
         'reward_xp': 400,
         'reward_items': ['Map Piece', 'Compass'],
-        'emoji': '🗺️',
+        'emoji': 'ðŸ—ºï¸',
         'difficulty': 'medium',
         'repeatable': True,
         'time_limit': 168,
@@ -586,53 +584,53 @@ QUESTS = {
     
     # Special Quests (one-time)
     'first_wand': {
-        'name': '🪄 The Wand Chooses',
+        'name': 'ðŸª„ The Wand Chooses',
         'description': 'Purchase your first wand from Ollivanders',
         'type': 'first_wand',
         'target': 1,
         'reward_points': 100,
         'reward_xp': 200,
         'reward_items': ['Wand Polish', 'Spell Book'],
-        'emoji': '🪄',
+        'emoji': 'ðŸª„',
         'difficulty': 'easy',
         'repeatable': False,
         'category': 'special'
     },
     'first_pet': {
-        'name': '🐾 Magical Companion',
+        'name': 'ðŸ¾ Magical Companion',
         'description': 'Adopt your first pet',
         'type': 'first_pet',
         'target': 1,
         'reward_points': 100,
         'reward_xp': 200,
         'reward_items': ['Pet Treats', 'Toy'],
-        'emoji': '🐾',
+        'emoji': 'ðŸ¾',
         'difficulty': 'easy',
         'repeatable': False,
         'category': 'special'
     },
     'first_secret': {
-        'name': '🔍 Secret Seeker',
+        'name': 'ðŸ” Secret Seeker',
         'description': 'Find your first secret room',
         'type': 'first_secret',
         'target': 1,
         'reward_points': 150,
         'reward_xp': 300,
         'reward_items': ['Secret Map', 'Torch'],
-        'emoji': '🔍',
+        'emoji': 'ðŸ”',
         'difficulty': 'medium',
         'repeatable': False,
         'category': 'special'
     },
     'first_chest': {
-        'name': '🎁 Treasure Hunter',
+        'name': 'ðŸŽ Treasure Hunter',
         'description': 'Open your first chest',
         'type': 'first_chest',
         'target': 1,
         'reward_points': 50,
         'reward_xp': 100,
         'reward_items': ['Chest Key'],
-        'emoji': '🎁',
+        'emoji': 'ðŸŽ',
         'difficulty': 'easy',
         'repeatable': False,
         'category': 'special'
@@ -640,92 +638,92 @@ QUESTS = {
     
     # Achievement Quests
     'wand_collector': {
-        'name': '🪄 Wand Collector',
+        'name': 'ðŸª„ Wand Collector',
         'description': 'Own 3 different wands',
         'type': 'wands_owned',
         'target': 3,
         'reward_points': 300,
         'reward_xp': 600,
         'reward_items': ['Wand Display Case', 'Rare Core'],
-        'emoji': '🪄',
+        'emoji': 'ðŸª„',
         'difficulty': 'hard',
         'repeatable': False,
         'category': 'achievement'
     },
     'pet_collector': {
-        'name': '🐾 Pet Collector',
+        'name': 'ðŸ¾ Pet Collector',
         'description': 'Own 5 different pets',
         'type': 'pets_owned',
         'target': 5,
         'reward_points': 350,
         'reward_xp': 700,
         'reward_items': ['Pet Playground', 'Rare Pet Food'],
-        'emoji': '🐾',
+        'emoji': 'ðŸ¾',
         'difficulty': 'hard',
         'repeatable': False,
         'category': 'achievement'
     },
     'secret_master': {
-        'name': '🔍 Secret Master',
+        'name': 'ðŸ” Secret Master',
         'description': 'Find 10 secret rooms',
         'type': 'secrets_found',
         'target': 10,
         'reward_points': 500,
         'reward_xp': 1000,
         'reward_items': ['Master Key', 'Hidden Passage Map'],
-        'emoji': '🔍',
+        'emoji': 'ðŸ”',
         'difficulty': 'legendary',
         'repeatable': False,
         'category': 'achievement'
     },
     'chest_addict': {
-        'name': '🎁 Chest Addict',
+        'name': 'ðŸŽ Chest Addict',
         'description': 'Open 50 chests',
         'type': 'chests_opened',
         'target': 50,
         'reward_points': 400,
         'reward_xp': 800,
         'reward_items': ['Golden Key', 'Loot Magnet'],
-        'emoji': '🎁',
+        'emoji': 'ðŸŽ',
         'difficulty': 'hard',
         'repeatable': False,
         'category': 'achievement'
     },
     'duel_legend': {
-        'name': '⚔️ Duel Legend',
+        'name': 'âš”ï¸ Duel Legend',
         'description': 'Win 50 duels',
         'type': 'duels_won',
         'target': 50,
         'reward_points': 600,
         'reward_xp': 1200,
         'reward_items': ['Legendary Sword', 'Duel Arena Pass'],
-        'emoji': '⚔️',
+        'emoji': 'âš”ï¸',
         'difficulty': 'legendary',
         'repeatable': False,
         'category': 'achievement'
     },
     'quidditch_legend': {
-        'name': '🧹 Quidditch Legend',
+        'name': 'ðŸ§¹ Quidditch Legend',
         'description': 'Score 5000 Quidditch points',
         'type': 'quidditch_points',
         'target': 5000,
         'reward_points': 600,
         'reward_xp': 1200,
         'reward_items': ['Golden Broom', 'Quidditch Trophy'],
-        'emoji': '🧹',
+        'emoji': 'ðŸ§¹',
         'difficulty': 'legendary',
         'repeatable': False,
         'category': 'achievement'
     },
     'trivia_god': {
-        'name': '📚 Trivia God',
+        'name': 'ðŸ“š Trivia God',
         'description': 'Answer 100 trivia questions correctly',
         'type': 'trivia_wins_total',
         'target': 100,
         'reward_points': 500,
         'reward_xp': 1000,
         'reward_items': ['Omniscient Orb', 'Knowledge Stone'],
-        'emoji': '📚',
+        'emoji': 'ðŸ“š',
         'difficulty': 'legendary',
         'repeatable': False,
         'category': 'achievement'
@@ -750,7 +748,7 @@ SECRET_ROOMS = {
         'location': 'Seventh Floor',
         'entrance': 'Across from the tapestry of Barnabas the Barmy',
         'history': 'Helped the DA practice magic',
-        'emoji': '🚪'
+        'emoji': 'ðŸšª'
     },
     'chamber_of_secrets': {
         'name': 'Chamber of Secrets',
@@ -766,7 +764,7 @@ SECRET_ROOMS = {
         'location': "Girl's Bathroom, Second Floor",
         'entrance': 'Sink with a snake carving',
         'history': 'Where Ginny was taken, where Harry killed the Basilisk',
-        'emoji': '🐍'
+        'emoji': 'ðŸ'
     },
     'shrieking_shack': {
         'name': 'Shrieking Shack',
@@ -782,7 +780,7 @@ SECRET_ROOMS = {
         'location': 'Hogsmeade',
         'entrance': 'Through the Whomping Willow tunnel',
         'history': 'Where Sirius Black hid, where the trio confronted Peter Pettigrew',
-        'emoji': '🏚️'
+        'emoji': 'ðŸšï¸'
     },
     'astronomy_tower': {
         'name': 'Astronomy Tower',
@@ -798,7 +796,7 @@ SECRET_ROOMS = {
         'location': 'West Tower',
         'entrance': 'Spiral staircase from the seventh floor',
         'history': 'Where Dumbledore fell, where the Death Eaters attacked',
-        'emoji': '🔭'
+        'emoji': 'ðŸ”­'
     },
     'prefects_bathroom': {
         'name': "Prefect's Bathroom",
@@ -814,7 +812,7 @@ SECRET_ROOMS = {
         'location': 'Fourth Floor',
         'entrance': 'Door with a mermaid knocker',
         'history': 'Where Harry solved the Golden Egg clue',
-        'emoji': '🛁'
+        'emoji': 'ðŸ›'
     },
     'divination_classroom': {
         'name': 'Divination Classroom',
@@ -830,7 +828,7 @@ SECRET_ROOMS = {
         'location': 'North Tower',
         'entrance': 'Trapdoor through a silver ladder',
         'history': 'Where the prophecy about Harry and Voldemort was made',
-        'emoji': '🔮'
+        'emoji': 'ðŸ”®'
     },
     'restricted_section': {
         'name': 'Restricted Section',
@@ -846,7 +844,7 @@ SECRET_ROOMS = {
         'location': 'Library',
         'entrance': 'Behind a roped-off area, guarded by chains',
         'history': 'Where Harry found the book about Horcruxes',
-        'emoji': '📚'
+        'emoji': 'ðŸ“š'
     },
     'headmasters_office': {
         'name': "Headmaster's Office",
@@ -862,7 +860,7 @@ SECRET_ROOMS = {
         'location': 'Behind the Gargoyle, Third Floor',
         'entrance': 'Stone gargoyle that requires a password',
         'history': 'Where Dumbledore trained Harry, where Snape became Headmaster',
-        'emoji': '👑'
+        'emoji': 'ðŸ‘‘'
     }
 }
 
@@ -871,41 +869,41 @@ SECRET_ROOMS = {
 # ==========================================
 MAP_LOCATIONS = [
     # Ground Floor
-    {'name': 'Great Hall', 'area': 'Ground Floor', 'emoji': '🏰', 'students': 20, 'teachers': ['Dumbledore', 'McGonagall']},
-    {'name': 'Entrance Hall', 'area': 'Ground Floor', 'emoji': '🚪', 'students': 5, 'teachers': ['Filch']},
-    {'name': 'Staff Room', 'area': 'Ground Floor', 'emoji': '👥', 'students': 0, 'teachers': ['All Staff']},
+    {'name': 'Great Hall', 'area': 'Ground Floor', 'emoji': 'ðŸ°', 'students': 20, 'teachers': ['Dumbledore', 'McGonagall']},
+    {'name': 'Entrance Hall', 'area': 'Ground Floor', 'emoji': 'ðŸšª', 'students': 5, 'teachers': ['Filch']},
+    {'name': 'Staff Room', 'area': 'Ground Floor', 'emoji': 'ðŸ‘¥', 'students': 0, 'teachers': ['All Staff']},
     
     # Dungeons
-    {'name': 'Slytherin Dungeon', 'area': 'Dungeons', 'emoji': '🐍', 'students': 15, 'teachers': ['Snape']},
-    {'name': 'Potions Classroom', 'area': 'Dungeons', 'emoji': '⚗️', 'students': 12, 'teachers': ['Snape']},
-    {'name': 'Hufflepuff Basement', 'area': 'Dungeons', 'emoji': '🦡', 'students': 14, 'teachers': ['Sprout']},
+    {'name': 'Slytherin Dungeon', 'area': 'Dungeons', 'emoji': 'ðŸ', 'students': 15, 'teachers': ['Snape']},
+    {'name': 'Potions Classroom', 'area': 'Dungeons', 'emoji': 'âš—ï¸', 'students': 12, 'teachers': ['Snape']},
+    {'name': 'Hufflepuff Basement', 'area': 'Dungeons', 'emoji': 'ðŸ¦¡', 'students': 14, 'teachers': ['Sprout']},
     
     # First Floor
-    {'name': 'Library', 'area': 'First Floor', 'emoji': '📚', 'students': 25, 'teachers': ['Madam Pince']},
-    {'name': 'Charms Classroom', 'area': 'First Floor', 'emoji': '✨', 'students': 10, 'teachers': ['Flitwick']},
-    {'name': 'Infirmary', 'area': 'First Floor', 'emoji': '🏥', 'students': 2, 'teachers': ['Madam Pomfrey']},
+    {'name': 'Library', 'area': 'First Floor', 'emoji': 'ðŸ“š', 'students': 25, 'teachers': ['Madam Pince']},
+    {'name': 'Charms Classroom', 'area': 'First Floor', 'emoji': 'âœ¨', 'students': 10, 'teachers': ['Flitwick']},
+    {'name': 'Infirmary', 'area': 'First Floor', 'emoji': 'ðŸ¥', 'students': 2, 'teachers': ['Madam Pomfrey']},
     
     # Second Floor
-    {'name': 'Ravenclaw Tower', 'area': 'Second Floor', 'emoji': '🦅', 'students': 13, 'teachers': ['Flitwick']},
-    {'name': 'Gryffindor Tower', 'area': 'Second Floor', 'emoji': '🦁', 'students': 16, 'teachers': ['McGonagall']},
-    {'name': 'Prefects Bathroom', 'area': 'Second Floor', 'emoji': '🛁', 'students': 1, 'teachers': []},
+    {'name': 'Ravenclaw Tower', 'area': 'Second Floor', 'emoji': 'ðŸ¦…', 'students': 13, 'teachers': ['Flitwick']},
+    {'name': 'Gryffindor Tower', 'area': 'Second Floor', 'emoji': 'ðŸ¦', 'students': 16, 'teachers': ['McGonagall']},
+    {'name': 'Prefects Bathroom', 'area': 'Second Floor', 'emoji': 'ðŸ›', 'students': 1, 'teachers': []},
     
     # Third Floor
-    {'name': 'Defense Against the Dark Arts', 'area': 'Third Floor', 'emoji': '⚔️', 'students': 8, 'teachers': ['Various']},
-    {'name': 'Transfiguration Classroom', 'area': 'Third Floor', 'emoji': '🐱', 'students': 9, 'teachers': ['McGonagall']},
-    {'name': 'Trophy Room', 'area': 'Third Floor', 'emoji': '🏆', 'students': 3, 'teachers': []},
+    {'name': 'Defense Against the Dark Arts', 'area': 'Third Floor', 'emoji': 'âš”ï¸', 'students': 8, 'teachers': ['Various']},
+    {'name': 'Transfiguration Classroom', 'area': 'Third Floor', 'emoji': 'ðŸ±', 'students': 9, 'teachers': ['McGonagall']},
+    {'name': 'Trophy Room', 'area': 'Third Floor', 'emoji': 'ðŸ†', 'students': 3, 'teachers': []},
     
     # Fourth Floor
-    {'name': 'Astronomy Tower', 'area': 'Fourth Floor', 'emoji': '🔭', 'students': 6, 'teachers': ['Sinistra']},
-    {'name': 'Divination Classroom', 'area': 'Fourth Floor', 'emoji': '🔮', 'students': 7, 'teachers': ['Trelawney']},
-    {'name': 'Room of Requirement', 'area': 'Fourth Floor', 'emoji': '🚪', 'students': 4, 'teachers': []},
+    {'name': 'Astronomy Tower', 'area': 'Fourth Floor', 'emoji': 'ðŸ”­', 'students': 6, 'teachers': ['Sinistra']},
+    {'name': 'Divination Classroom', 'area': 'Fourth Floor', 'emoji': 'ðŸ”®', 'students': 7, 'teachers': ['Trelawney']},
+    {'name': 'Room of Requirement', 'area': 'Fourth Floor', 'emoji': 'ðŸšª', 'students': 4, 'teachers': []},
     
     # Grounds
-    {'name': 'Quidditch Pitch', 'area': 'Grounds', 'emoji': '🧹', 'students': 18, 'teachers': ['Hooch']},
-    {'name': 'Hagrid\'s Hut', 'area': 'Grounds', 'emoji': '🏠', 'students': 2, 'teachers': ['Hagrid']},
-    {'name': 'Forbidden Forest', 'area': 'Grounds', 'emoji': '🌲', 'students': 1, 'teachers': ['Hagrid']},
-    {'name': 'Greenhouses', 'area': 'Grounds', 'emoji': '🌱', 'students': 5, 'teachers': ['Sprout']},
-    {'name': 'Black Lake', 'area': 'Grounds', 'emoji': '💧', 'students': 0, 'teachers': ['Squid']},
+    {'name': 'Quidditch Pitch', 'area': 'Grounds', 'emoji': 'ðŸ§¹', 'students': 18, 'teachers': ['Hooch']},
+    {'name': 'Hagrid\'s Hut', 'area': 'Grounds', 'emoji': 'ðŸ ', 'students': 2, 'teachers': ['Hagrid']},
+    {'name': 'Forbidden Forest', 'area': 'Grounds', 'emoji': 'ðŸŒ²', 'students': 1, 'teachers': ['Hagrid']},
+    {'name': 'Greenhouses', 'area': 'Grounds', 'emoji': 'ðŸŒ±', 'students': 5, 'teachers': ['Sprout']},
+    {'name': 'Black Lake', 'area': 'Grounds', 'emoji': 'ðŸ’§', 'students': 0, 'teachers': ['Squid']},
 ]
 
 SECRET_PASSAGES = [
@@ -923,7 +921,7 @@ SPELLS = {
     # Charms
     'wingardium_leviosa': {
         'name': 'Wingardium Leviosa',
-        'emoji': '✨',
+        'emoji': 'âœ¨',
         'type': 'charm',
         'category': 'charm',
         'power': 5,
@@ -940,7 +938,7 @@ SPELLS = {
     },
     'lumos': {
         'name': 'Lumos',
-        'emoji': '💡',
+        'emoji': 'ðŸ’¡',
         'type': 'charm',
         'category': 'charm',
         'power': 2,
@@ -957,7 +955,7 @@ SPELLS = {
     },
     'nox': {
         'name': 'Nox',
-        'emoji': '🌙',
+        'emoji': 'ðŸŒ™',
         'type': 'charm',
         'category': 'charm',
         'power': 2,
@@ -974,7 +972,7 @@ SPELLS = {
     },
     'alohomora': {
         'name': 'Alohomora',
-        'emoji': '🔓',
+        'emoji': 'ðŸ”“',
         'type': 'charm',
         'category': 'charm',
         'power': 10,
@@ -991,7 +989,7 @@ SPELLS = {
     },
     'accio': {
         'name': 'Accio',
-        'emoji': '🪄',
+        'emoji': 'ðŸª„',
         'type': 'charm',
         'category': 'charm',
         'power': 15,
@@ -1008,7 +1006,7 @@ SPELLS = {
     },
     'reparo': {
         'name': 'Reparo',
-        'emoji': '🔧',
+        'emoji': 'ðŸ”§',
         'type': 'charm',
         'category': 'charm',
         'power': 10,
@@ -1025,7 +1023,7 @@ SPELLS = {
     },
     'scourgify': {
         'name': 'Scourgify',
-        'emoji': '🧹',
+        'emoji': 'ðŸ§¹',
         'type': 'charm',
         'category': 'charm',
         'power': 5,
@@ -1042,7 +1040,7 @@ SPELLS = {
     },
     'aguamenti': {
         'name': 'Aguamenti',
-        'emoji': '💧',
+        'emoji': 'ðŸ’§',
         'type': 'charm',
         'category': 'charm',
         'power': 8,
@@ -1059,7 +1057,7 @@ SPELLS = {
     },
     'incendio': {
         'name': 'Incendio',
-        'emoji': '🔥',
+        'emoji': 'ðŸ”¥',
         'type': 'charm',
         'category': 'charm',
         'power': 15,
@@ -1076,7 +1074,7 @@ SPELLS = {
     },
     'glacius': {
         'name': 'Glacius',
-        'emoji': '❄️',
+        'emoji': 'â„ï¸',
         'type': 'charm',
         'category': 'charm',
         'power': 15,
@@ -1095,7 +1093,7 @@ SPELLS = {
     # Defensive Spells
     'protego': {
         'name': 'Protego',
-        'emoji': '🛡️',
+        'emoji': 'ðŸ›¡ï¸',
         'type': 'defense',
         'category': 'defense',
         'power': 20,
@@ -1112,7 +1110,7 @@ SPELLS = {
     },
     'protego_maxima': {
         'name': 'Protego Maxima',
-        'emoji': '🛡️✨',
+        'emoji': 'ðŸ›¡ï¸âœ¨',
         'type': 'defense',
         'category': 'defense',
         'power': 40,
@@ -1129,7 +1127,7 @@ SPELLS = {
     },
     'expecto_patronum': {
         'name': 'Expecto Patronum',
-        'emoji': '✨🦌',
+        'emoji': 'âœ¨ðŸ¦Œ',
         'type': 'defense',
         'category': 'defense',
         'power': 50,
@@ -1146,7 +1144,7 @@ SPELLS = {
     },
     'salvio_hexia': {
         'name': 'Salvio Hexia',
-        'emoji': '🔮',
+        'emoji': 'ðŸ”®',
         'type': 'defense',
         'category': 'defense',
         'power': 30,
@@ -1165,7 +1163,7 @@ SPELLS = {
     # Offensive Spells
     'expelliarmus': {
         'name': 'Expelliarmus',
-        'emoji': '⚔️',
+        'emoji': 'âš”ï¸',
         'type': 'offensive',
         'category': 'offensive',
         'power': 25,
@@ -1182,7 +1180,7 @@ SPELLS = {
     },
     'stupefy': {
         'name': 'Stupefy',
-        'emoji': '⚡',
+        'emoji': 'âš¡',
         'type': 'offensive',
         'category': 'offensive',
         'power': 30,
@@ -1199,7 +1197,7 @@ SPELLS = {
     },
     'petrificus_totalus': {
         'name': 'Petrificus Totalus',
-        'emoji': '🗿',
+        'emoji': 'ðŸ—¿',
         'type': 'offensive',
         'category': 'offensive',
         'power': 35,
@@ -1216,7 +1214,7 @@ SPELLS = {
     },
     'confringo': {
         'name': 'Confringo',
-        'emoji': '💥',
+        'emoji': 'ðŸ’¥',
         'type': 'offensive',
         'category': 'offensive',
         'power': 40,
@@ -1233,7 +1231,7 @@ SPELLS = {
     },
     'reducto': {
         'name': 'Reducto',
-        'emoji': '🧱',
+        'emoji': 'ðŸ§±',
         'type': 'offensive',
         'category': 'offensive',
         'power': 45,
@@ -1250,7 +1248,7 @@ SPELLS = {
     },
     'sectumsempra': {
         'name': 'Sectumsempra',
-        'emoji': '🔪',
+        'emoji': 'ðŸ”ª',
         'type': 'offensive',
         'category': 'offensive',
         'power': 60,
@@ -1269,7 +1267,7 @@ SPELLS = {
     # Unforgivable Curses
     'imperio': {
         'name': 'Imperio',
-        'emoji': '👁️',
+        'emoji': 'ðŸ‘ï¸',
         'type': 'unforgivable',
         'category': 'offensive',
         'power': 70,
@@ -1286,7 +1284,7 @@ SPELLS = {
     },
     'crucio': {
         'name': 'Crucio',
-        'emoji': '💢',
+        'emoji': 'ðŸ’¢',
         'type': 'unforgivable',
         'category': 'offensive',
         'power': 80,
@@ -1303,7 +1301,7 @@ SPELLS = {
     },
     'avadakedavra': {
         'name': 'Avada Kedavra',
-        'emoji': '💀',
+        'emoji': 'ðŸ’€',
         'type': 'unforgivable',
         'category': 'offensive',
         'power': 100,
@@ -1322,7 +1320,7 @@ SPELLS = {
     # Healing Spells
     'episkey': {
         'name': 'Episkey',
-        'emoji': '❤️',
+        'emoji': 'â¤ï¸',
         'type': 'healing',
         'category': 'healing',
         'power': 20,
@@ -1339,7 +1337,7 @@ SPELLS = {
     },
     'vulnera_sanentur': {
         'name': 'Vulnera Sanentur',
-        'emoji': '🩹',
+        'emoji': 'ðŸ©¹',
         'type': 'healing',
         'category': 'healing',
         'power': 35,
@@ -1356,7 +1354,7 @@ SPELLS = {
     },
     'enervate': {
         'name': 'Enervate',
-        'emoji': '⚡✨',
+        'emoji': 'âš¡âœ¨',
         'type': 'healing',
         'category': 'healing',
         'power': 15,
@@ -1375,7 +1373,7 @@ SPELLS = {
     # Transfiguration
     'vera_verto': {
         'name': 'Vera Verto',
-        'emoji': '🐦',
+        'emoji': 'ðŸ¦',
         'type': 'transfiguration',
         'category': 'transfiguration',
         'power': 25,
@@ -1392,7 +1390,7 @@ SPELLS = {
     },
     'avifors': {
         'name': 'Avifors',
-        'emoji': '🦅',
+        'emoji': 'ðŸ¦…',
         'type': 'transfiguration',
         'category': 'transfiguration',
         'power': 20,
@@ -1414,15 +1412,15 @@ SPELLS = {
 POTION_RECIPES = {
     'cure_for_boils': {
         'name': 'Cure for Boils',
-        'emoji': '🧪',
+        'emoji': 'ðŸ§ª',
         'difficulty': 'easy',
         'brew_time': 10,  # minutes
         'description': 'A simple potion that cures boils and skin irritations',
         'effect': 'Cures minor skin ailments',
         'ingredients': [
-            {'name': 'Dried Nettles', 'emoji': '🌿', 'quantity': 3},
-            {'name': 'Snake Fangs', 'emoji': '🐍', 'quantity': 2},
-            {'name': 'Porcupine Quills', 'emoji': '🦔', 'quantity': 1}
+            {'name': 'Dried Nettles', 'emoji': 'ðŸŒ¿', 'quantity': 3},
+            {'name': 'Snake Fangs', 'emoji': 'ðŸ', 'quantity': 2},
+            {'name': 'Porcupine Quills', 'emoji': 'ðŸ¦”', 'quantity': 1}
         ],
         'cauldron': 'pewter',
         'stir_direction': 'clockwise',
@@ -1435,15 +1433,15 @@ POTION_RECIPES = {
     },
     'forgetfulness_potion': {
         'name': 'Forgetfulness Potion',
-        'emoji': '🧠',
+        'emoji': 'ðŸ§ ',
         'difficulty': 'easy',
         'brew_time': 15,
         'description': 'Causes mild memory loss and confusion',
         'effect': 'Makes target forget recent events',
         'ingredients': [
-            {'name': 'Lethe Water', 'emoji': '💧', 'quantity': 2},
-            {'name': 'Mistletoe Berries', 'emoji': '🫐', 'quantity': 3},
-            {'name': 'Valerian Root', 'emoji': '🌱', 'quantity': 1}
+            {'name': 'Lethe Water', 'emoji': 'ðŸ’§', 'quantity': 2},
+            {'name': 'Mistletoe Berries', 'emoji': 'ðŸ«', 'quantity': 3},
+            {'name': 'Valerian Root', 'emoji': 'ðŸŒ±', 'quantity': 1}
         ],
         'cauldron': 'brass',
         'stir_direction': 'anticlockwise',
@@ -1456,15 +1454,15 @@ POTION_RECIPES = {
     },
     'wiggenweld_potion': {
         'name': 'Wiggenweld Potion',
-        'emoji': '❤️',
+        'emoji': 'â¤ï¸',
         'difficulty': 'easy',
         'brew_time': 12,
         'description': 'A healing potion that restores health',
         'effect': 'Heals minor injuries',
         'ingredients': [
-            {'name': 'Dittany', 'emoji': '🌿', 'quantity': 2},
-            {'name': 'Horklump Juice', 'emoji': '🧃', 'quantity': 1},
-            {'name': 'Flobberworm Mucus', 'emoji': '🪱', 'quantity': 3}
+            {'name': 'Dittany', 'emoji': 'ðŸŒ¿', 'quantity': 2},
+            {'name': 'Horklump Juice', 'emoji': 'ðŸ§ƒ', 'quantity': 1},
+            {'name': 'Flobberworm Mucus', 'emoji': 'ðŸª±', 'quantity': 3}
         ],
         'cauldron': 'pewter',
         'stir_direction': 'clockwise',
@@ -1477,16 +1475,16 @@ POTION_RECIPES = {
     },
     'draught_of_living_death': {
         'name': 'Draught of Living Death',
-        'emoji': '💀',
+        'emoji': 'ðŸ’€',
         'difficulty': 'hard',
         'brew_time': 30,
         'description': 'Puts the drinker into a death-like slumber',
         'effect': 'Causes deep, dreamless sleep',
         'ingredients': [
-            {'name': 'Powdered Moonstone', 'emoji': '🌙', 'quantity': 4},
-            {'name': 'Syrup of Hellebore', 'emoji': '🍯', 'quantity': 2},
-            {'name': 'Valerian Sprigs', 'emoji': '🌿', 'quantity': 3},
-            {'name': 'Sopophorous Bean', 'emoji': '🫘', 'quantity': 1}
+            {'name': 'Powdered Moonstone', 'emoji': 'ðŸŒ™', 'quantity': 4},
+            {'name': 'Syrup of Hellebore', 'emoji': 'ðŸ¯', 'quantity': 2},
+            {'name': 'Valerian Sprigs', 'emoji': 'ðŸŒ¿', 'quantity': 3},
+            {'name': 'Sopophorous Bean', 'emoji': 'ðŸ«˜', 'quantity': 1}
         ],
         'cauldron': 'copper',
         'stir_direction': 'anticlockwise',
@@ -1499,16 +1497,16 @@ POTION_RECIPES = {
     },
     'veritaserum': {
         'name': 'Veritaserum',
-        'emoji': '🔮',
+        'emoji': 'ðŸ”®',
         'difficulty': 'hard',
         'brew_time': 45,
         'description': 'Powerful truth serum',
         'effect': 'Forces drinker to tell the truth',
         'ingredients': [
-            {'name': 'Mistletoe Berries', 'emoji': '🫐', 'quantity': 5},
-            {'name': 'Valerian Root', 'emoji': '🌱', 'quantity': 4},
-            {'name': 'Sopophorous Bean', 'emoji': '🫘', 'quantity': 2},
-            {'name': 'Jobberknoll Feather', 'emoji': '🪶', 'quantity': 1}
+            {'name': 'Mistletoe Berries', 'emoji': 'ðŸ«', 'quantity': 5},
+            {'name': 'Valerian Root', 'emoji': 'ðŸŒ±', 'quantity': 4},
+            {'name': 'Sopophorous Bean', 'emoji': 'ðŸ«˜', 'quantity': 2},
+            {'name': 'Jobberknoll Feather', 'emoji': 'ðŸª¶', 'quantity': 1}
         ],
         'cauldron': 'silver',
         'stir_direction': 'clockwise',
@@ -1521,17 +1519,17 @@ POTION_RECIPES = {
     },
     'polyjuice_potion': {
         'name': 'Polyjuice Potion',
-        'emoji': '👤',
+        'emoji': 'ðŸ‘¤',
         'difficulty': 'hard',
         'brew_time': 60,
         'description': 'Transforms drinker into someone else',
         'effect': 'Take appearance of another person',
         'ingredients': [
-            {'name': 'Fluxweed', 'emoji': '🌿', 'quantity': 3},
-            {'name': 'Knotgrass', 'emoji': '🌱', 'quantity': 3},
-            {'name': 'Lacewing Flies', 'emoji': '🪰', 'quantity': 3},
-            {'name': 'Leeches', 'emoji': '🪱', 'quantity': 2},
-            {'name': 'Hair of target', 'emoji': '💇', 'quantity': 1}
+            {'name': 'Fluxweed', 'emoji': 'ðŸŒ¿', 'quantity': 3},
+            {'name': 'Knotgrass', 'emoji': 'ðŸŒ±', 'quantity': 3},
+            {'name': 'Lacewing Flies', 'emoji': 'ðŸª°', 'quantity': 3},
+            {'name': 'Leeches', 'emoji': 'ðŸª±', 'quantity': 2},
+            {'name': 'Hair of target', 'emoji': 'ðŸ’‡', 'quantity': 1}
         ],
         'cauldron': 'copper',
         'stir_direction': 'anticlockwise',
@@ -1544,17 +1542,17 @@ POTION_RECIPES = {
     },
     'felix_felicis': {
         'name': 'Felix Felicis',
-        'emoji': '✨',
+        'emoji': 'âœ¨',
         'difficulty': 'legendary',
         'brew_time': 120,
         'description': 'Liquid luck - everything you try will succeed',
         'effect': 'Incredible luck for 1 hour',
         'ingredients': [
-            {'name': 'Occamy Eggshell', 'emoji': '🥚', 'quantity': 1},
-            {'name': 'Tincture of Thyme', 'emoji': '🧪', 'quantity': 4},
-            {'name': 'Ashwinder Eggs', 'emoji': '🥚', 'quantity': 3},
-            {'name': 'Powdered Unicorn Horn', 'emoji': '🦄', 'quantity': 1},
-            {'name': 'Moondew', 'emoji': '🌙', 'quantity': 5}
+            {'name': 'Occamy Eggshell', 'emoji': 'ðŸ¥š', 'quantity': 1},
+            {'name': 'Tincture of Thyme', 'emoji': 'ðŸ§ª', 'quantity': 4},
+            {'name': 'Ashwinder Eggs', 'emoji': 'ðŸ¥š', 'quantity': 3},
+            {'name': 'Powdered Unicorn Horn', 'emoji': 'ðŸ¦„', 'quantity': 1},
+            {'name': 'Moondew', 'emoji': 'ðŸŒ™', 'quantity': 5}
         ],
         'cauldron': 'gold',
         'stir_direction': 'clockwise',
@@ -1567,16 +1565,16 @@ POTION_RECIPES = {
     },
     'amortentia': {
         'name': 'Amortentia',
-        'emoji': '💕',
+        'emoji': 'ðŸ’•',
         'difficulty': 'hard',
         'brew_time': 40,
         'description': 'The most powerful love potion',
         'effect': 'Creates strong infatuation',
         'ingredients': [
-            {'name': 'Pearl Dust', 'emoji': '✨', 'quantity': 3},
-            {'name': 'Rose Thorns', 'emoji': '🌹', 'quantity': 4},
-            {'name': 'Peppermint', 'emoji': '🌿', 'quantity': 3},
-            {'name': 'Fresh Rose Petals', 'emoji': '🌹', 'quantity': 5}
+            {'name': 'Pearl Dust', 'emoji': 'âœ¨', 'quantity': 3},
+            {'name': 'Rose Thorns', 'emoji': 'ðŸŒ¹', 'quantity': 4},
+            {'name': 'Peppermint', 'emoji': 'ðŸŒ¿', 'quantity': 3},
+            {'name': 'Fresh Rose Petals', 'emoji': 'ðŸŒ¹', 'quantity': 5}
         ],
         'cauldron': 'silver',
         'stir_direction': 'anticlockwise',
@@ -1589,16 +1587,16 @@ POTION_RECIPES = {
     },
     'skele_gro': {
         'name': 'Skele-Gro',
-        'emoji': '🦴',
+        'emoji': 'ðŸ¦´',
         'difficulty': 'medium',
         'brew_time': 25,
         'description': 'Regrows missing or broken bones',
         'effect': 'Regenerates bone tissue',
         'ingredients': [
-            {'name': 'Dragon Blood', 'emoji': '🐉', 'quantity': 2},
-            {'name': 'Bone Dust', 'emoji': '🦴', 'quantity': 4},
-            {'name': 'Mandrake Root', 'emoji': '🌱', 'quantity': 2},
-            {'name': 'Pickled Shrake Spine', 'emoji': '🦔', 'quantity': 1}
+            {'name': 'Dragon Blood', 'emoji': 'ðŸ‰', 'quantity': 2},
+            {'name': 'Bone Dust', 'emoji': 'ðŸ¦´', 'quantity': 4},
+            {'name': 'Mandrake Root', 'emoji': 'ðŸŒ±', 'quantity': 2},
+            {'name': 'Pickled Shrake Spine', 'emoji': 'ðŸ¦”', 'quantity': 1}
         ],
         'cauldron': 'copper',
         'stir_direction': 'clockwise',
@@ -1611,16 +1609,16 @@ POTION_RECIPES = {
     },
     'draught_of_peace': {
         'name': 'Draught of Peace',
-        'emoji': '☮️',
+        'emoji': 'â˜®ï¸',
         'difficulty': 'medium',
         'brew_time': 20,
         'description': 'Calms anxiety and agitation',
         'effect': 'Reduces stress and fear',
         'ingredients': [
-            {'name': 'Lavender', 'emoji': '🌸', 'quantity': 3},
-            {'name': 'Chamomile', 'emoji': '🌼', 'quantity': 3},
-            {'name': 'Moonstone', 'emoji': '🌙', 'quantity': 2},
-            {'name': 'Powdered Silver', 'emoji': '✨', 'quantity': 1}
+            {'name': 'Lavender', 'emoji': 'ðŸŒ¸', 'quantity': 3},
+            {'name': 'Chamomile', 'emoji': 'ðŸŒ¼', 'quantity': 3},
+            {'name': 'Moonstone', 'emoji': 'ðŸŒ™', 'quantity': 2},
+            {'name': 'Powdered Silver', 'emoji': 'âœ¨', 'quantity': 1}
         ],
         'cauldron': 'pewter',
         'stir_direction': 'clockwise',
@@ -1637,40 +1635,40 @@ POTION_RECIPES = {
 # INGREDIENT SHOP
 # ==========================================
 INGREDIENTS = {
-    'dried_nettles': {'name': 'Dried Nettles', 'emoji': '🌿', 'price': 5, 'rarity': 'common'},
-    'snake_fangs': {'name': 'Snake Fangs', 'emoji': '🐍', 'price': 8, 'rarity': 'common'},
-    'porcupine_quills': {'name': 'Porcupine Quills', 'emoji': '🦔', 'price': 10, 'rarity': 'common'},
-    'lethe_water': {'name': 'Lethe Water', 'emoji': '💧', 'price': 12, 'rarity': 'common'},
-    'mistletoe_berries': {'name': 'Mistletoe Berries', 'emoji': '🫐', 'price': 8, 'rarity': 'common'},
-    'valerian_root': {'name': 'Valerian Root', 'emoji': '🌱', 'price': 10, 'rarity': 'common'},
-    'dittany': {'name': 'Dittany', 'emoji': '🌿', 'price': 15, 'rarity': 'uncommon'},
-    'horklump_juice': {'name': 'Horklump Juice', 'emoji': '🧃', 'price': 12, 'rarity': 'common'},
-    'flobberworm_mucus': {'name': 'Flobberworm Mucus', 'emoji': '🪱', 'price': 5, 'rarity': 'common'},
-    'powdered_moonstone': {'name': 'Powdered Moonstone', 'emoji': '🌙', 'price': 25, 'rarity': 'uncommon'},
-    'syrup_of_hellebore': {'name': 'Syrup of Hellebore', 'emoji': '🍯', 'price': 20, 'rarity': 'uncommon'},
-    'valerian_sprigs': {'name': 'Valerian Sprigs', 'emoji': '🌿', 'price': 15, 'rarity': 'common'},
-    'sopophorous_bean': {'name': 'Sopophorous Bean', 'emoji': '🫘', 'price': 30, 'rarity': 'rare'},
-    'jobberknoll_feather': {'name': 'Jobberknoll Feather', 'emoji': '🪶', 'price': 40, 'rarity': 'rare'},
-    'fluxweed': {'name': 'Fluxweed', 'emoji': '🌿', 'price': 25, 'rarity': 'uncommon'},
-    'knotgrass': {'name': 'Knotgrass', 'emoji': '🌱', 'price': 20, 'rarity': 'uncommon'},
-    'lacewing_flies': {'name': 'Lacewing Flies', 'emoji': '🪰', 'price': 15, 'rarity': 'common'},
-    'leeches': {'name': 'Leeches', 'emoji': '🪱', 'price': 10, 'rarity': 'common'},
-    'occamy_eggshell': {'name': 'Occamy Eggshell', 'emoji': '🥚', 'price': 100, 'rarity': 'legendary'},
-    'tincture_of_thyme': {'name': 'Tincture of Thyme', 'emoji': '🧪', 'price': 30, 'rarity': 'rare'},
-    'ashwinder_eggs': {'name': 'Ashwinder Eggs', 'emoji': '🥚', 'price': 50, 'rarity': 'rare'},
-    'powdered_unicorn_horn': {'name': 'Powdered Unicorn Horn', 'emoji': '🦄', 'price': 150, 'rarity': 'legendary'},
-    'moondew': {'name': 'Moondew', 'emoji': '🌙', 'price': 35, 'rarity': 'rare'},
-    'pearl_dust': {'name': 'Pearl Dust', 'emoji': '✨', 'price': 40, 'rarity': 'rare'},
-    'rose_thorns': {'name': 'Rose Thorns', 'emoji': '🌹', 'price': 10, 'rarity': 'common'},
-    'peppermint': {'name': 'Peppermint', 'emoji': '🌿', 'price': 8, 'rarity': 'common'},
-    'fresh_rose_petals': {'name': 'Fresh Rose Petals', 'emoji': '🌹', 'price': 12, 'rarity': 'common'},
-    'dragon_blood': {'name': 'Dragon Blood', 'emoji': '🐉', 'price': 60, 'rarity': 'legendary'},
-    'bone_dust': {'name': 'Bone Dust', 'emoji': '🦴', 'price': 15, 'rarity': 'common'},
-    'mandrake_root': {'name': 'Mandrake Root', 'emoji': '🌱', 'price': 45, 'rarity': 'rare'},
-    'pickled_shrake_spine': {'name': 'Pickled Shrake Spine', 'emoji': '🦔', 'price': 30, 'rarity': 'rare'},
-    'lavender': {'name': 'Lavender', 'emoji': '🌸', 'price': 8, 'rarity': 'common'},
-    'chamomile': {'name': 'Chamomile', 'emoji': '🌼', 'price': 8, 'rarity': 'common'},
-    'powdered_silver': {'name': 'Powdered Silver', 'emoji': '✨', 'price': 25, 'rarity': 'uncommon'}
+    'dried_nettles': {'name': 'Dried Nettles', 'emoji': 'ðŸŒ¿', 'price': 5, 'rarity': 'common'},
+    'snake_fangs': {'name': 'Snake Fangs', 'emoji': 'ðŸ', 'price': 8, 'rarity': 'common'},
+    'porcupine_quills': {'name': 'Porcupine Quills', 'emoji': 'ðŸ¦”', 'price': 10, 'rarity': 'common'},
+    'lethe_water': {'name': 'Lethe Water', 'emoji': 'ðŸ’§', 'price': 12, 'rarity': 'common'},
+    'mistletoe_berries': {'name': 'Mistletoe Berries', 'emoji': 'ðŸ«', 'price': 8, 'rarity': 'common'},
+    'valerian_root': {'name': 'Valerian Root', 'emoji': 'ðŸŒ±', 'price': 10, 'rarity': 'common'},
+    'dittany': {'name': 'Dittany', 'emoji': 'ðŸŒ¿', 'price': 15, 'rarity': 'uncommon'},
+    'horklump_juice': {'name': 'Horklump Juice', 'emoji': 'ðŸ§ƒ', 'price': 12, 'rarity': 'common'},
+    'flobberworm_mucus': {'name': 'Flobberworm Mucus', 'emoji': 'ðŸª±', 'price': 5, 'rarity': 'common'},
+    'powdered_moonstone': {'name': 'Powdered Moonstone', 'emoji': 'ðŸŒ™', 'price': 25, 'rarity': 'uncommon'},
+    'syrup_of_hellebore': {'name': 'Syrup of Hellebore', 'emoji': 'ðŸ¯', 'price': 20, 'rarity': 'uncommon'},
+    'valerian_sprigs': {'name': 'Valerian Sprigs', 'emoji': 'ðŸŒ¿', 'price': 15, 'rarity': 'common'},
+    'sopophorous_bean': {'name': 'Sopophorous Bean', 'emoji': 'ðŸ«˜', 'price': 30, 'rarity': 'rare'},
+    'jobberknoll_feather': {'name': 'Jobberknoll Feather', 'emoji': 'ðŸª¶', 'price': 40, 'rarity': 'rare'},
+    'fluxweed': {'name': 'Fluxweed', 'emoji': 'ðŸŒ¿', 'price': 25, 'rarity': 'uncommon'},
+    'knotgrass': {'name': 'Knotgrass', 'emoji': 'ðŸŒ±', 'price': 20, 'rarity': 'uncommon'},
+    'lacewing_flies': {'name': 'Lacewing Flies', 'emoji': 'ðŸª°', 'price': 15, 'rarity': 'common'},
+    'leeches': {'name': 'Leeches', 'emoji': 'ðŸª±', 'price': 10, 'rarity': 'common'},
+    'occamy_eggshell': {'name': 'Occamy Eggshell', 'emoji': 'ðŸ¥š', 'price': 100, 'rarity': 'legendary'},
+    'tincture_of_thyme': {'name': 'Tincture of Thyme', 'emoji': 'ðŸ§ª', 'price': 30, 'rarity': 'rare'},
+    'ashwinder_eggs': {'name': 'Ashwinder Eggs', 'emoji': 'ðŸ¥š', 'price': 50, 'rarity': 'rare'},
+    'powdered_unicorn_horn': {'name': 'Powdered Unicorn Horn', 'emoji': 'ðŸ¦„', 'price': 150, 'rarity': 'legendary'},
+    'moondew': {'name': 'Moondew', 'emoji': 'ðŸŒ™', 'price': 35, 'rarity': 'rare'},
+    'pearl_dust': {'name': 'Pearl Dust', 'emoji': 'âœ¨', 'price': 40, 'rarity': 'rare'},
+    'rose_thorns': {'name': 'Rose Thorns', 'emoji': 'ðŸŒ¹', 'price': 10, 'rarity': 'common'},
+    'peppermint': {'name': 'Peppermint', 'emoji': 'ðŸŒ¿', 'price': 8, 'rarity': 'common'},
+    'fresh_rose_petals': {'name': 'Fresh Rose Petals', 'emoji': 'ðŸŒ¹', 'price': 12, 'rarity': 'common'},
+    'dragon_blood': {'name': 'Dragon Blood', 'emoji': 'ðŸ‰', 'price': 60, 'rarity': 'legendary'},
+    'bone_dust': {'name': 'Bone Dust', 'emoji': 'ðŸ¦´', 'price': 15, 'rarity': 'common'},
+    'mandrake_root': {'name': 'Mandrake Root', 'emoji': 'ðŸŒ±', 'price': 45, 'rarity': 'rare'},
+    'pickled_shrake_spine': {'name': 'Pickled Shrake Spine', 'emoji': 'ðŸ¦”', 'price': 30, 'rarity': 'rare'},
+    'lavender': {'name': 'Lavender', 'emoji': 'ðŸŒ¸', 'price': 8, 'rarity': 'common'},
+    'chamomile': {'name': 'Chamomile', 'emoji': 'ðŸŒ¼', 'price': 8, 'rarity': 'common'},
+    'powdered_silver': {'name': 'Powdered Silver', 'emoji': 'âœ¨', 'price': 25, 'rarity': 'uncommon'}
 }
 
 # ==========================================
@@ -1679,7 +1677,7 @@ INGREDIENTS = {
 CLASSES = {
     'transfiguration': {
         'name': 'Transfiguration',
-        'emoji': '🐱',
+        'emoji': 'ðŸ±',
         'professor': 'Minerva McGonagall',
         'description': 'The art of changing the form and appearance of objects',
         'topics': ['Match to needle', 'Teacup to turtle', 'Human transfiguration'],
@@ -1696,7 +1694,7 @@ CLASSES = {
     },
     'potions': {
         'name': 'Potions',
-        'emoji': '⚗️',
+        'emoji': 'âš—ï¸',
         'professor': 'Severus Snape',
         'description': 'The art of brewing magical potions',
         'topics': ['Cure for Boils', 'Draught of Living Death', 'Polyjuice Potion'],
@@ -1713,7 +1711,7 @@ CLASSES = {
     },
     'dada': {
         'name': 'Defense Against the Dark Arts',
-        'emoji': '⚔️',
+        'emoji': 'âš”ï¸',
         'professor': 'Various',
         'description': 'Learning to defend against dark creatures and spells',
         'topics': ['Red Caps', 'Grindylows', 'Boggarts', 'Dementors'],
@@ -1730,7 +1728,7 @@ CLASSES = {
     },
     'charms': {
         'name': 'Charms',
-        'emoji': '✨',
+        'emoji': 'âœ¨',
         'professor': 'Filius Flitwick',
         'description': 'Learning everyday spells and enchantments',
         'topics': ['Wingardium Leviosa', 'Lumos', 'Alohomora', 'Accio'],
@@ -1747,7 +1745,7 @@ CLASSES = {
     },
     'herbology': {
         'name': 'Herbology',
-        'emoji': '🌱',
+        'emoji': 'ðŸŒ±',
         'professor': 'Pomona Sprout',
         'description': 'Study of magical plants and fungi',
         'topics': ['Mandrakes', 'Venomous Tentacula', 'Whomping Willow'],
@@ -1764,7 +1762,7 @@ CLASSES = {
     },
     'astronomy': {
         'name': 'Astronomy',
-        'emoji': '⭐',
+        'emoji': 'â­',
         'professor': 'Aurora Sinistra',
         'description': 'Study of stars, planets, and celestial movements',
         'topics': ['Planetary charts', 'Moon phases', 'Star naming'],
@@ -1781,7 +1779,7 @@ CLASSES = {
     },
     'history_of_magic': {
         'name': 'History of Magic',
-        'emoji': '📜',
+        'emoji': 'ðŸ“œ',
         'professor': 'Cuthbert Binns',
         'description': 'Study of wizarding history',
         'topics': ['Goblin Rebellions', 'Founding of Hogwarts', 'Wizarding Wars'],
@@ -1798,7 +1796,7 @@ CLASSES = {
     },
     'flying': {
         'name': 'Flying',
-        'emoji': '🧹',
+        'emoji': 'ðŸ§¹',
         'professor': 'Rolanda Hooch',
         'description': 'Learning to fly on broomsticks',
         'topics': ['Broom mounting', 'Basic flight', 'Sharp turns', 'Landing'],
@@ -1815,7 +1813,7 @@ CLASSES = {
     },
     'ancient_runes': {
         'name': 'Ancient Runes',
-        'emoji': '🔤',
+        'emoji': 'ðŸ”¤',
         'professor': 'Bathsheda Babbling',
         'description': 'Study of ancient magical symbols and languages',
         'topics': ['Elder Futhark', 'Runic translations', 'Enchantment symbols'],
@@ -1832,7 +1830,7 @@ CLASSES = {
     },
     'divination': {
         'name': 'Divination',
-        'emoji': '🔮',
+        'emoji': 'ðŸ”®',
         'professor': 'Sybill Trelawney',
         'description': 'Art of predicting the future',
         'topics': ['Tea leaves', 'Crystal balls', 'Dream interpretation', 'Palmistry'],
@@ -1849,7 +1847,7 @@ CLASSES = {
     },
     'care_of_magical_creatures': {
         'name': 'Care of Magical Creatures',
-        'emoji': '🦄',
+        'emoji': 'ðŸ¦„',
         'professor': 'Rubeus Hagrid',
         'description': 'Learning to care for magical beasts',
         'topics': ['Hippogriffs', 'Dragons', 'Nifflers', 'Thestrals'],
@@ -1866,7 +1864,7 @@ CLASSES = {
     },
     'alchemy': {
         'name': 'Alchemy',
-        'emoji': '⚜️',
+        'emoji': 'âšœï¸',
         'professor': 'Unknown',
         'description': 'The study of transmutation and the Philosopher\'s Stone',
         'topics': ['Lead to gold', 'Elixir of Life', 'Philosopher\'s Stone'],
@@ -1891,154 +1889,154 @@ BATTLE_PASS_TIERS = {
         'name': 'Novice Wizard',
         'points_required': 0,
         'free_rewards': [
-            {'type': 'points', 'amount': 100, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Chocolate Frog', 'emoji': '🐸'}
+            {'type': 'points', 'amount': 100, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Chocolate Frog', 'emoji': 'ðŸ¸'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 200, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Rare Core', 'emoji': '✨'},
-            {'type': 'badge', 'name': 'Novice Wizard', 'emoji': '🎓'}
+            {'type': 'points', 'amount': 200, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Rare Core', 'emoji': 'âœ¨'},
+            {'type': 'badge', 'name': 'Novice Wizard', 'emoji': 'ðŸŽ“'}
         ],
         'color': 0x95a5a6,
-        'emoji': '🎓'
+        'emoji': 'ðŸŽ“'
     },
     2: {
         'name': 'Apprentice',
         'points_required': 500,
         'free_rewards': [
-            {'type': 'points', 'amount': 150, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Spell Scroll', 'emoji': '📜'}
+            {'type': 'points', 'amount': 150, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Spell Scroll', 'emoji': 'ðŸ“œ'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 300, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Wand Polish', 'emoji': '✨'},
-            {'type': 'consumable', 'item': 'Butterbeer x3', 'emoji': '🍺'}
+            {'type': 'points', 'amount': 300, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Wand Polish', 'emoji': 'âœ¨'},
+            {'type': 'consumable', 'item': 'Butterbeer x3', 'emoji': 'ðŸº'}
         ],
         'color': 0x3498db,
-        'emoji': '📚'
+        'emoji': 'ðŸ“š'
     },
     3: {
         'name': 'Journeyman',
         'points_required': 1000,
         'free_rewards': [
-            {'type': 'points', 'amount': 200, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Potion Ingredient Pack', 'emoji': '🧪'}
+            {'type': 'points', 'amount': 200, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Potion Ingredient Pack', 'emoji': 'ðŸ§ª'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 400, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Rare Wand Core', 'emoji': '🪄'},
-            {'type': 'key', 'name': 'Common Chest Key', 'emoji': '🔑'}
+            {'type': 'points', 'amount': 400, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Rare Wand Core', 'emoji': 'ðŸª„'},
+            {'type': 'key', 'name': 'Common Chest Key', 'emoji': 'ðŸ”‘'}
         ],
         'color': 0x2ecc71,
-        'emoji': '⚔️'
+        'emoji': 'âš”ï¸'
     },
     4: {
         'name': 'Adept',
         'points_required': 2000,
         'free_rewards': [
-            {'type': 'points', 'amount': 250, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Ancient Tome Page', 'emoji': '📖'}
+            {'type': 'points', 'amount': 250, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Ancient Tome Page', 'emoji': 'ðŸ“–'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 500, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Dragon Egg Fragment', 'emoji': '🥚'},
-            {'type': 'consumable', 'item': 'Felix Felicis (1 use)', 'emoji': '✨'}
+            {'type': 'points', 'amount': 500, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Dragon Egg Fragment', 'emoji': 'ðŸ¥š'},
+            {'type': 'consumable', 'item': 'Felix Felicis (1 use)', 'emoji': 'âœ¨'}
         ],
         'color': 0xe67e22,
-        'emoji': '🔮'
+        'emoji': 'ðŸ”®'
     },
     5: {
         'name': 'Expert',
         'points_required': 3500,
         'free_rewards': [
-            {'type': 'points', 'amount': 300, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Magical Compass', 'emoji': '🧭'}
+            {'type': 'points', 'amount': 300, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Magical Compass', 'emoji': 'ðŸ§­'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 600, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Phoenix Feather', 'emoji': '🪶'},
-            {'type': 'badge', 'name': 'Expert Wizard', 'emoji': '🌟'}
+            {'type': 'points', 'amount': 600, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Phoenix Feather', 'emoji': 'ðŸª¶'},
+            {'type': 'badge', 'name': 'Expert Wizard', 'emoji': 'ðŸŒŸ'}
         ],
         'color': 0xf1c40f,
-        'emoji': '🏆'
+        'emoji': 'ðŸ†'
     },
     6: {
         'name': 'Master',
         'points_required': 5000,
         'free_rewards': [
-            {'type': 'points', 'amount': 350, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Enchanted Map', 'emoji': '🗺️'}
+            {'type': 'points', 'amount': 350, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Enchanted Map', 'emoji': 'ðŸ—ºï¸'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 700, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Basilisk Fang', 'emoji': '🐍'},
-            {'type': 'key', 'name': 'Rare Chest Key', 'emoji': '🔑'}
+            {'type': 'points', 'amount': 700, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Basilisk Fang', 'emoji': 'ðŸ'},
+            {'type': 'key', 'name': 'Rare Chest Key', 'emoji': 'ðŸ”‘'}
         ],
         'color': 0x9b59b6,
-        'emoji': '👑'
+        'emoji': 'ðŸ‘‘'
     },
     7: {
         'name': 'Grandmaster',
         'points_required': 7500,
         'free_rewards': [
-            {'type': 'points', 'amount': 400, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Time Turner Shard', 'emoji': '⏳'}
+            {'type': 'points', 'amount': 400, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Time Turner Shard', 'emoji': 'â³'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 800, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Thestral Hair', 'emoji': '🐴'},
-            {'type': 'consumable', 'item': 'Polyjuice Potion', 'emoji': '👤'}
+            {'type': 'points', 'amount': 800, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Thestral Hair', 'emoji': 'ðŸ´'},
+            {'type': 'consumable', 'item': 'Polyjuice Potion', 'emoji': 'ðŸ‘¤'}
         ],
         'color': 0xe74c3c,
-        'emoji': '⚡'
+        'emoji': 'âš¡'
     },
     8: {
         'name': 'Legend',
         'points_required': 10000,
         'free_rewards': [
-            {'type': 'points', 'amount': 500, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Marauders Map Piece', 'emoji': '🗺️'}
+            {'type': 'points', 'amount': 500, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Marauders Map Piece', 'emoji': 'ðŸ—ºï¸'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 1000, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Elder Wand Piece', 'emoji': '👑'},
-            {'type': 'badge', 'name': 'Legendary Wizard', 'emoji': '✨'}
+            {'type': 'points', 'amount': 1000, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Elder Wand Piece', 'emoji': 'ðŸ‘‘'},
+            {'type': 'badge', 'name': 'Legendary Wizard', 'emoji': 'âœ¨'}
         ],
         'color': 0xc0392b,
-        'emoji': '🏅'
+        'emoji': 'ðŸ…'
     },
     9: {
         'name': 'Mythic',
         'points_required': 15000,
         'free_rewards': [
-            {'type': 'points', 'amount': 750, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Resurrection Stone Shard', 'emoji': '💎'}
+            {'type': 'points', 'amount': 750, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Resurrection Stone Shard', 'emoji': 'ðŸ’Ž'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 1500, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Invisibility Cloak Fragment', 'emoji': '👻'},
-            {'type': 'key', 'name': 'Legendary Chest Key', 'emoji': '🔑'}
+            {'type': 'points', 'amount': 1500, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Invisibility Cloak Fragment', 'emoji': 'ðŸ‘»'},
+            {'type': 'key', 'name': 'Legendary Chest Key', 'emoji': 'ðŸ”‘'}
         ],
         'color': 0x8e44ad,
-        'emoji': '🌌'
+        'emoji': 'ðŸŒŒ'
     },
     10: {
         'name': 'Headmaster',
         'points_required': 20000,
         'free_rewards': [
-            {'type': 'points', 'amount': 1000, 'emoji': '💰'},
-            {'type': 'item', 'item': 'House Cup', 'emoji': '🏆'}
+            {'type': 'points', 'amount': 1000, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'House Cup', 'emoji': 'ðŸ†'}
         ],
         'premium_rewards': [
-            {'type': 'points', 'amount': 2000, 'emoji': '💰'},
-            {'type': 'item', 'item': 'Complete Elder Wand', 'emoji': '👑'},
-            {'type': 'item', 'item': 'Complete Resurrection Stone', 'emoji': '💎'},
-            {'type': 'item', 'item': 'Complete Invisibility Cloak', 'emoji': '👻'},
-            {'type': 'badge', 'name': 'Headmaster', 'emoji': '🏰'},
-            {'type': 'role', 'name': 'Headmaster', 'emoji': '👑'}
+            {'type': 'points', 'amount': 2000, 'emoji': 'ðŸ’°'},
+            {'type': 'item', 'item': 'Complete Elder Wand', 'emoji': 'ðŸ‘‘'},
+            {'type': 'item', 'item': 'Complete Resurrection Stone', 'emoji': 'ðŸ’Ž'},
+            {'type': 'item', 'item': 'Complete Invisibility Cloak', 'emoji': 'ðŸ‘»'},
+            {'type': 'badge', 'name': 'Headmaster', 'emoji': 'ðŸ°'},
+            {'type': 'role', 'name': 'Headmaster', 'emoji': 'ðŸ‘‘'}
         ],
         'color': 0x000000,
-        'emoji': '🏰'
+        'emoji': 'ðŸ°'
     }
 }
 
@@ -2048,22 +2046,22 @@ PREMIUM_COST = 1000  # Points to unlock premium
 # INVENTORY ITEMS (SPECIAL ITEMS)
 # ==========================================
 ITEM_CATEGORIES = {
-    'wand': {'name': 'Wands', 'emoji': '🪄', 'color': 0xff6b6b},
-    'pet': {'name': 'Pets', 'emoji': '🐾', 'color': 0x3498db},
-    'potion': {'name': 'Potions', 'emoji': '🧪', 'color': 0x2ecc71},
-    'spell': {'name': 'Spells', 'emoji': '✨', 'color': 0x9b59b6},
-    'treasure': {'name': 'Treasures', 'emoji': '💎', 'color': 0xf1c40f},
-    'consumable': {'name': 'Consumables', 'emoji': '🍫', 'color': 0xe67e22},
-    'quest': {'name': 'Quest Items', 'emoji': '📜', 'color': 0x1abc9c},
-    'key': {'name': 'Keys', 'emoji': '🔑', 'color': 0xe74c3c},
-    'artifact': {'name': 'Artifacts', 'emoji': '🏺', 'color': 0x8e44ad}
+    'wand': {'name': 'Wands', 'emoji': 'ðŸª„', 'color': 0xff6b6b},
+    'pet': {'name': 'Pets', 'emoji': 'ðŸ¾', 'color': 0x3498db},
+    'potion': {'name': 'Potions', 'emoji': 'ðŸ§ª', 'color': 0x2ecc71},
+    'spell': {'name': 'Spells', 'emoji': 'âœ¨', 'color': 0x9b59b6},
+    'treasure': {'name': 'Treasures', 'emoji': 'ðŸ’Ž', 'color': 0xf1c40f},
+    'consumable': {'name': 'Consumables', 'emoji': 'ðŸ«', 'color': 0xe67e22},
+    'quest': {'name': 'Quest Items', 'emoji': 'ðŸ“œ', 'color': 0x1abc9c},
+    'key': {'name': 'Keys', 'emoji': 'ðŸ”‘', 'color': 0xe74c3c},
+    'artifact': {'name': 'Artifacts', 'emoji': 'ðŸº', 'color': 0x8e44ad}
 }
 
 SPECIAL_ITEMS = {
     # Wands
     'phoenix_feather_wand': {
         'name': 'Phoenix Feather Wand',
-        'emoji': '🪄',
+        'emoji': 'ðŸª„',
         'category': 'wand',
         'rarity': 'legendary',
         'value': 500,
@@ -2075,7 +2073,7 @@ SPECIAL_ITEMS = {
     },
     'dragon_heartstring_wand': {
         'name': 'Dragon Heartstring Wand',
-        'emoji': '🐉',
+        'emoji': 'ðŸ‰',
         'category': 'wand',
         'rarity': 'rare',
         'value': 400,
@@ -2087,7 +2085,7 @@ SPECIAL_ITEMS = {
     },
     'unicorn_hair_wand': {
         'name': 'Unicorn Hair Wand',
-        'emoji': '🦄',
+        'emoji': 'ðŸ¦„',
         'category': 'wand',
         'rarity': 'rare',
         'value': 300,
@@ -2099,7 +2097,7 @@ SPECIAL_ITEMS = {
     },
     'thestral_hair_wand': {
         'name': 'Thestral Hair Wand',
-        'emoji': '🐴',
+        'emoji': 'ðŸ´',
         'category': 'wand',
         'rarity': 'legendary',
         'value': 450,
@@ -2111,7 +2109,7 @@ SPECIAL_ITEMS = {
     },
     'elder_wand': {
         'name': 'Elder Wand',
-        'emoji': '👑',
+        'emoji': 'ðŸ‘‘',
         'category': 'wand',
         'rarity': 'mythic',
         'value': 10000,
@@ -2125,7 +2123,7 @@ SPECIAL_ITEMS = {
     # Potions
     'felix_felicis': {
         'name': 'Felix Felicis',
-        'emoji': '✨',
+        'emoji': 'âœ¨',
         'category': 'potion',
         'rarity': 'legendary',
         'value': 500,
@@ -2138,7 +2136,7 @@ SPECIAL_ITEMS = {
     },
     'polyjuice_potion': {
         'name': 'Polyjuice Potion',
-        'emoji': '🧪',
+        'emoji': 'ðŸ§ª',
         'category': 'potion',
         'rarity': 'rare',
         'value': 300,
@@ -2151,7 +2149,7 @@ SPECIAL_ITEMS = {
     },
     'veritaserum': {
         'name': 'Veritaserum',
-        'emoji': '🔮',
+        'emoji': 'ðŸ”®',
         'category': 'potion',
         'rarity': 'rare',
         'value': 400,
@@ -2164,7 +2162,7 @@ SPECIAL_ITEMS = {
     },
     'amortentia': {
         'name': 'Amortentia',
-        'emoji': '💕',
+        'emoji': 'ðŸ’•',
         'category': 'potion',
         'rarity': 'rare',
         'value': 350,
@@ -2177,7 +2175,7 @@ SPECIAL_ITEMS = {
     },
     'skele_gro': {
         'name': 'Skele-Gro',
-        'emoji': '🦴',
+        'emoji': 'ðŸ¦´',
         'category': 'potion',
         'rarity': 'uncommon',
         'value': 200,
@@ -2192,7 +2190,7 @@ SPECIAL_ITEMS = {
     # Treasure Items
     'golden_snitch': {
         'name': 'Golden Snitch',
-        'emoji': '✨',
+        'emoji': 'âœ¨',
         'category': 'treasure',
         'rarity': 'legendary',
         'value': 1000,
@@ -2204,7 +2202,7 @@ SPECIAL_ITEMS = {
     },
     'house_cup': {
         'name': 'House Cup',
-        'emoji': '🏆',
+        'emoji': 'ðŸ†',
         'category': 'treasure',
         'rarity': 'legendary',
         'value': 2000,
@@ -2216,7 +2214,7 @@ SPECIAL_ITEMS = {
     },
     'gringotts_key': {
         'name': 'Gringotts Vault Key',
-        'emoji': '🔑',
+        'emoji': 'ðŸ”‘',
         'category': 'key',
         'rarity': 'rare',
         'value': 500,
@@ -2230,7 +2228,7 @@ SPECIAL_ITEMS = {
     # Consumables
     'chocolate_frog': {
         'name': 'Chocolate Frog',
-        'emoji': '🐸',
+        'emoji': 'ðŸ¸',
         'category': 'consumable',
         'rarity': 'common',
         'value': 10,
@@ -2243,7 +2241,7 @@ SPECIAL_ITEMS = {
     },
     'butterbeer': {
         'name': 'Butterbeer',
-        'emoji': '🍺',
+        'emoji': 'ðŸº',
         'category': 'consumable',
         'rarity': 'common',
         'value': 15,
@@ -2256,7 +2254,7 @@ SPECIAL_ITEMS = {
     },
     'pumpkin_juice': {
         'name': 'Pumpkin Juice',
-        'emoji': '🧃',
+        'emoji': 'ðŸ§ƒ',
         'category': 'consumable',
         'rarity': 'common',
         'value': 5,
@@ -2271,7 +2269,7 @@ SPECIAL_ITEMS = {
     # Quest Items
     'marauders_map': {
         'name': "Marauder's Map",
-        'emoji': '🗺️',
+        'emoji': 'ðŸ—ºï¸',
         'category': 'quest',
         'rarity': 'legendary',
         'value': 1000,
@@ -2283,7 +2281,7 @@ SPECIAL_ITEMS = {
     },
     'resurrection_stone': {
         'name': 'Resurrection Stone',
-        'emoji': '💎',
+        'emoji': 'ðŸ’Ž',
         'category': 'artifact',
         'rarity': 'mythic',
         'value': 5000,
@@ -2295,7 +2293,7 @@ SPECIAL_ITEMS = {
     },
     'invisibility_cloak': {
         'name': 'Invisibility Cloak',
-        'emoji': '👻',
+        'emoji': 'ðŸ‘»',
         'category': 'artifact',
         'rarity': 'mythic',
         'value': 5000,
@@ -2319,7 +2317,7 @@ def load_data():
             return json.load(f)
     except FileNotFoundError:
         # Create default data structure if file doesn't exist
-        print("📁 Data file not found, creating new one...")
+        print("ðŸ“ Data file not found, creating new one...")
         default_data = {
             'houses': {
                 'gryffindor': {'points': 0, 'weekly': 0, 'monthly': 0},
@@ -2344,7 +2342,7 @@ def load_data():
         return default_data
     except json.JSONDecodeError:
         # If file is corrupted, create new one
-        print("⚠️ Data file corrupted, creating new one...")
+        print("âš ï¸ Data file corrupted, creating new one...")
         default_data = {
             'houses': {
                 'gryffindor': {'points': 0, 'weekly': 0, 'monthly': 0},
@@ -2438,7 +2436,7 @@ def get_level_progress(current_xp, current_level):
 
 def create_progress_bar(percentage, length=20):
     filled = int((percentage / 100) * length)
-    return "█" * filled + "░" * (length - filled)
+    return "â–ˆ" * filled + "â–‘" * (length - filled)
 
 def time_until_next_checkin(last_checkin):
     if not last_checkin:
@@ -2466,14 +2464,14 @@ def calculate_streak_bonus(streak):
 
 def get_achievement_emoji(achievement_id):
     achievements = {
-        'first_checkin': '👣', 'streak_7': '🔥', 'streak_30': '🌙',
-        'streak_100': '💯', 'streak_365': '👑', 'streak_500': '⚡',
-        'streak_1000': '🌟', 'points_1000': '💰', 'points_10000': '💎',
-        'duel_winner': '⚔️', 'quidditch_star': '🧹', 'secret_finder': '🔍',
-        'pet_collector': '🐾', 'wand_master': '🪄', 'potion_brewer': '⚗️',
-        'class_attendance': '📚', 'tournament_champ': '🏆', 'marathon_runner': '🏃'
+        'first_checkin': 'ðŸ‘£', 'streak_7': 'ðŸ”¥', 'streak_30': 'ðŸŒ™',
+        'streak_100': 'ðŸ’¯', 'streak_365': 'ðŸ‘‘', 'streak_500': 'âš¡',
+        'streak_1000': 'ðŸŒŸ', 'points_1000': 'ðŸ’°', 'points_10000': 'ðŸ’Ž',
+        'duel_winner': 'âš”ï¸', 'quidditch_star': 'ðŸ§¹', 'secret_finder': 'ðŸ”',
+        'pet_collector': 'ðŸ¾', 'wand_master': 'ðŸª„', 'potion_brewer': 'âš—ï¸',
+        'class_attendance': 'ðŸ“š', 'tournament_champ': 'ðŸ†', 'marathon_runner': 'ðŸƒ'
     }
-    return achievements.get(achievement_id, '🏅')
+    return achievements.get(achievement_id, 'ðŸ…')
 
 def get_rarity_color(rarity):
     colors = {
@@ -2513,121 +2511,121 @@ async def award_achievement(user_id, achievement_id):
     achievements = {
         'first_checkin': {
             'name': 'First Check-in',
-            'emoji': '👣',
+            'emoji': 'ðŸ‘£',
             'description': 'Checked in for the first time',
             'points': 50
         },
         'streak_7': {
             'name': 'Weekly Warrior',
-            'emoji': '🔥',
+            'emoji': 'ðŸ”¥',
             'description': '7-day check-in streak',
             'points': 100
         },
         'streak_30': {
             'name': 'Monthly Master',
-            'emoji': '🌙',
+            'emoji': 'ðŸŒ™',
             'description': '30-day check-in streak',
             'points': 300
         },
         'streak_100': {
             'name': 'Century Champion',
-            'emoji': '💯',
+            'emoji': 'ðŸ’¯',
             'description': '100-day check-in streak',
             'points': 1000
         },
         'streak_365': {
             'name': 'Yearly Legend',
-            'emoji': '👑',
+            'emoji': 'ðŸ‘‘',
             'description': '365-day check-in streak',
             'points': 5000
         },
         'duel_winner': {
             'name': 'Duelist',
-            'emoji': '⚔️',
+            'emoji': 'âš”ï¸',
             'description': 'Won first duel',
             'points': 100
         },
         'duel_master': {
             'name': 'Duel Master',
-            'emoji': '⚔️✨',
+            'emoji': 'âš”ï¸âœ¨',
             'description': 'Won 10 duels',
             'points': 500
         },
         'quidditch_star': {
             'name': 'Quidditch Star',
-            'emoji': '🧹',
+            'emoji': 'ðŸ§¹',
             'description': 'Played first Quidditch match',
             'points': 50
         },
         'secret_hunter': {
             'name': 'Secret Hunter',
-            'emoji': '🔍',
+            'emoji': 'ðŸ”',
             'description': 'Found 5 secret rooms',
             'points': 200
         },
         'master_explorer': {
             'name': 'Master Explorer',
-            'emoji': '🗺️',
+            'emoji': 'ðŸ—ºï¸',
             'description': 'Found 10 secret rooms',
             'points': 500
         },
         'hogwarts_legend': {
             'name': 'Hogwarts Legend',
-            'emoji': '🏰',
+            'emoji': 'ðŸ°',
             'description': 'Found all secret rooms',
             'points': 1000
         },
         'pet_collector': {
             'name': 'Animal Friend',
-            'emoji': '🐾',
+            'emoji': 'ðŸ¾',
             'description': 'Adopted first pet',
             'points': 100
         },
         'wand_master': {
             'name': 'Wand Master',
-            'emoji': '🪄',
+            'emoji': 'ðŸª„',
             'description': 'Purchased first wand',
             'points': 100
         },
         'potion_brewer': {
             'name': 'Potion Brewer',
-            'emoji': '⚗️',
+            'emoji': 'âš—ï¸',
             'description': 'Brewed first potion',
             'points': 150
         },
         'class_attendance': {
             'name': 'Diligent Student',
-            'emoji': '📚',
+            'emoji': 'ðŸ“š',
             'description': 'Attended first class',
             'points': 50
         },
         'tournament_champ': {
             'name': 'Tournament Champion',
-            'emoji': '🏆',
+            'emoji': 'ðŸ†',
             'description': 'Won a tournament',
             'points': 500
         },
         'marathon_runner': {
             'name': 'Marathon Runner',
-            'emoji': '🏃',
+            'emoji': 'ðŸƒ',
             'description': 'Completed a marathon',
             'points': 300
         },
         'bp_veteran': {
             'name': 'Battle Pass Veteran',
-            'emoji': '🎖️',
+            'emoji': 'ðŸŽ–ï¸',
             'description': 'Reached tier 5',
             'points': 200
         },
         'bp_champion': {
             'name': 'Battle Pass Champion',
-            'emoji': '🏆',
+            'emoji': 'ðŸ†',
             'description': 'Reached tier 10',
             'points': 500
         },
         'bp_legend': {
             'name': 'Battle Pass Legend',
-            'emoji': '👑',
+            'emoji': 'ðŸ‘‘',
             'description': 'Completed premium battle pass',
             'points': 1000
         }
@@ -2845,12 +2843,12 @@ class PointReasonModal(Modal):
 # ==========================================
 async def process_add_points(interaction, member, points, reason=""):
     if points <= 0:
-        await interaction.response.send_message("❌ Points must be positive!", ephemeral=True)
+        await interaction.response.send_message("âŒ Points must be positive!", ephemeral=True)
         return
     
     user_id = str(member.id)
     if user_id not in data['users']:
-        await interaction.response.send_message("❌ User hasn't been sorted yet!", ephemeral=True)
+        await interaction.response.send_message("âŒ User hasn't been sorted yet!", ephemeral=True)
         return
     
     house = data['users'][user_id]['house']
@@ -2860,10 +2858,10 @@ async def process_add_points(interaction, member, points, reason=""):
     multiplier = 1
     if random.random() < 0.05:  # 5% chance
         multiplier = 2
-        bonus_msg = "🎉 **DOUBLE POINTS!** 🎉"
+        bonus_msg = "ðŸŽ‰ **DOUBLE POINTS!** ðŸŽ‰"
     elif random.random() < 0.01:  # 1% chance
         multiplier = 3
-        bonus_msg = "⚡ **TRIPLE POINTS!** ⚡"
+        bonus_msg = "âš¡ **TRIPLE POINTS!** âš¡"
     else:
         bonus_msg = ""
     
@@ -2881,7 +2879,7 @@ async def process_add_points(interaction, member, points, reason=""):
     new_level = get_level_from_points(data['users'][user_id]['xp'])
     if new_level > old_level:
         data['users'][user_id]['level'] = new_level
-        level_msg = f"\n🌟 **LEVEL UP!** Now level {new_level}! 🌟"
+        level_msg = f"\nðŸŒŸ **LEVEL UP!** Now level {new_level}! ðŸŒŸ"
     else:
         level_msg = ""
     
@@ -2901,7 +2899,7 @@ async def process_add_points(interaction, member, points, reason=""):
     quality = random.choice(house_info['traits'])
     
     embed = discord.Embed(
-        title="✨ POINTS AWARDED! ✨",
+        title="âœ¨ POINTS AWARDED! âœ¨",
         description=f"{bonus_msg}\n\n**{actual_points} points** to **{house_info['name']}** for {quality}!{level_msg}",
         color=house_info['color']
     )
@@ -2915,12 +2913,12 @@ async def process_add_points(interaction, member, points, reason=""):
 
 async def process_remove_points(interaction, member, points, reason=""):
     if points <= 0:
-        await interaction.response.send_message("❌ Points must be positive!", ephemeral=True)
+        await interaction.response.send_message("âŒ Points must be positive!", ephemeral=True)
         return
     
     user_id = str(member.id)
     if user_id not in data['users']:
-        await interaction.response.send_message("❌ User hasn't been sorted yet!", ephemeral=True)
+        await interaction.response.send_message("âŒ User hasn't been sorted yet!", ephemeral=True)
         return
     
     house = data['users'][user_id]['house']
@@ -2941,7 +2939,7 @@ async def process_remove_points(interaction, member, points, reason=""):
     })
     
     embed = discord.Embed(
-        title="⚠️ POINTS DEDUCTED",
+        title="âš ï¸ POINTS DEDUCTED",
         description=f"**{points} points** from **{house_info['name']}**!",
         color=0x808080
     )
@@ -3019,7 +3017,7 @@ class HouseSelect(Select):
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Only the staff member who started this can sort!", ephemeral=True)
+            await interaction.response.send_message("âŒ Only the staff member who started this can sort!", ephemeral=True)
             return
         
         house = self.values[0]
@@ -3030,7 +3028,7 @@ async def perform_sorting(interaction, member, house):
     
     # Dramatic sorting ceremony
     embed = discord.Embed(
-        title="🎓 THE SORTING HAT CEREMONY",
+        title="ðŸŽ“ THE SORTING HAT CEREMONY",
         description=f"{member.mention} approaches the stool...\n\nThe Sorting Hat considers...",
         color=HOUSE_DATA[house]['color']
     )
@@ -3100,7 +3098,7 @@ async def perform_sorting(interaction, member, house):
     # Final announcement
     house_info = HOUSE_DATA[house]
     embed = discord.Embed(
-        title="🏰 THE SORTING HAT HAS SPOKEN! 🏰",
+        title="ðŸ° THE SORTING HAT HAS SPOKEN! ðŸ°",
         description=f"{get_random_spell_quote()}\n\n**{member.mention}** is now a member of...\n\n# {house_info['emoji']} **{house_info['name']}!**\n\n*{house_info['welcome_message']}*",
         color=house_info['color']
     )
@@ -3118,15 +3116,15 @@ async def perform_sorting(interaction, member, house):
 @bot.tree.command(name="sort", description="Sort a user into a house (Staff only)")
 @app_commands.describe(member="The user to sort", house="Choose a house (optional - interactive if not chosen)")
 @app_commands.choices(house=[
-    app_commands.Choice(name="🦁 Gryffindor", value="gryffindor"),
-    app_commands.Choice(name="🐍 Slytherin", value="slytherin"),
-    app_commands.Choice(name="🦅 Ravenclaw", value="ravenclaw"),
-    app_commands.Choice(name="🦡 Hufflepuff", value="hufflepuff"),
-    app_commands.Choice(name="🎲 Random House", value="random")
+    app_commands.Choice(name="ðŸ¦ Gryffindor", value="gryffindor"),
+    app_commands.Choice(name="ðŸ Slytherin", value="slytherin"),
+    app_commands.Choice(name="ðŸ¦… Ravenclaw", value="ravenclaw"),
+    app_commands.Choice(name="ðŸ¦¡ Hufflepuff", value="hufflepuff"),
+    app_commands.Choice(name="ðŸŽ² Random House", value="random")
 ])
 async def slash_sort(interaction: discord.Interaction, member: discord.Member, house: str = None):
     if not await slash_is_staff(interaction):
-        await interaction.response.send_message("❌ You need staff permissions!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need staff permissions!", ephemeral=True)
         return
     
     if house == "random":
@@ -3134,13 +3132,13 @@ async def slash_sort(interaction: discord.Interaction, member: discord.Member, h
         await perform_sorting(interaction, member, house)
     elif house:
         if house not in HOUSE_DATA:
-            await interaction.response.send_message("❌ Invalid house!", ephemeral=True)
+            await interaction.response.send_message("âŒ Invalid house!", ephemeral=True)
             return
         await perform_sorting(interaction, member, house)
     else:
         view = SortingHatView(str(interaction.user.id), member)
         embed = discord.Embed(
-            title="🎓 SORTING CEREMONY",
+            title="ðŸŽ“ SORTING CEREMONY",
             description=f"Choose a house for {member.mention}:",
             color=0x9b59b6
         )
@@ -3153,16 +3151,16 @@ async def slash_sort(interaction: discord.Interaction, member: discord.Member, h
 @app_commands.describe(member="The user to award", points="Number of points", reason="Reason for awarding")
 async def slash_add(interaction: discord.Interaction, member: discord.Member, points: int, reason: str = ""):
     if not await slash_is_staff(interaction):
-        await interaction.response.send_message("❌ You need staff permissions!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need staff permissions!", ephemeral=True)
         return
     
     if points <= 0:
-        await interaction.response.send_message("❌ Points must be positive!", ephemeral=True)
+        await interaction.response.send_message("âŒ Points must be positive!", ephemeral=True)
         return
     
     user_id = str(member.id)
     if user_id not in data['users']:
-        await interaction.response.send_message("❌ User hasn't been sorted yet!", ephemeral=True)
+        await interaction.response.send_message("âŒ User hasn't been sorted yet!", ephemeral=True)
         return
     
     house = data['users'][user_id]['house']
@@ -3189,7 +3187,7 @@ async def slash_add(interaction: discord.Interaction, member: discord.Member, po
     })
     
     embed = discord.Embed(
-        title="✨ POINTS AWARDED! ✨",
+        title="âœ¨ POINTS AWARDED! âœ¨",
         description=f"**{points} points** to **{HOUSE_DATA[house]['name']}**!",
         color=HOUSE_DATA[house]['color']
     )
@@ -3205,16 +3203,16 @@ async def slash_add(interaction: discord.Interaction, member: discord.Member, po
 @app_commands.describe(member="The user", points="Number of points", reason="Reason for removal")
 async def slash_remove(interaction: discord.Interaction, member: discord.Member, points: int, reason: str = ""):
     if not await slash_is_staff(interaction):
-        await interaction.response.send_message("❌ You need staff permissions!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need staff permissions!", ephemeral=True)
         return
     
     if points <= 0:
-        await interaction.response.send_message("❌ Points must be positive!", ephemeral=True)
+        await interaction.response.send_message("âŒ Points must be positive!", ephemeral=True)
         return
     
     user_id = str(member.id)
     if user_id not in data['users']:
-        await interaction.response.send_message("❌ User hasn't been sorted yet!", ephemeral=True)
+        await interaction.response.send_message("âŒ User hasn't been sorted yet!", ephemeral=True)
         return
     
     house = data['users'][user_id]['house']
@@ -3237,7 +3235,7 @@ async def slash_remove(interaction: discord.Interaction, member: discord.Member,
     })
     
     embed = discord.Embed(
-        title="⚠️ POINTS DEDUCTED",
+        title="âš ï¸ POINTS DEDUCTED",
         description=f"**{points} points** from **{house_info['name']}**!",
         color=0x808080
     )
@@ -3254,13 +3252,13 @@ async def slash_remove(interaction: discord.Interaction, member: discord.Member,
 @bot.tree.command(name="scores", description="View house points standings")
 @app_commands.describe(period="Time period to view")
 @app_commands.choices(period=[
-    app_commands.Choice(name="🏆 All Time", value="all"),
-    app_commands.Choice(name="📅 This Week", value="weekly"),
-    app_commands.Choice(name="📆 This Month", value="monthly")
+    app_commands.Choice(name="ðŸ† All Time", value="all"),
+    app_commands.Choice(name="ðŸ“… This Week", value="weekly"),
+    app_commands.Choice(name="ðŸ“† This Month", value="monthly")
 ])
 async def slash_scores(interaction: discord.Interaction, period: str = "all"):
     embed = discord.Embed(
-        title="🏆 THE HOUSE CUP STANDINGS 🏆",
+        title="ðŸ† THE HOUSE CUP STANDINGS ðŸ†",
         color=0x9b59b6,
         timestamp=datetime.now()
     )
@@ -3282,7 +3280,7 @@ async def slash_scores(interaction: discord.Interaction, period: str = "all"):
         # Create progress bar
         bar_length = 20
         filled = int((points / max(1, max_points)) * bar_length)
-        bar = "█" * filled + "░" * (bar_length - filled)
+        bar = "â–ˆ" * filled + "â–‘" * (bar_length - filled)
         
         # Get member count
         member_count = len([u for u in data['users'].values() if u['house'] == house])
@@ -3300,14 +3298,14 @@ async def slash_scores(interaction: discord.Interaction, period: str = "all"):
     # Add footer with stats
     total = sum(h[points_key] for h in data['houses'].values())
     embed.add_field(
-        name="📊 STATISTICS",
+        name="ðŸ“Š STATISTICS",
         value=f"**Total Points:** {format_points(total)}\n**Period:** {period_name}",
         inline=False
     )
     
     # Add house cup wins
     cup_wins = "\n".join([f"{HOUSE_DATA[h]['emoji']} {HOUSE_DATA[h]['name']}: {data['houses'][h].get('house_cup_wins', 0)} wins" for h in data['houses']])
-    embed.add_field(name="🏆 HOUSE CUP HISTORY", value=cup_wins, inline=False)
+    embed.add_field(name="ðŸ† HOUSE CUP HISTORY", value=cup_wins, inline=False)
     
     await interaction.response.send_message(embed=embed)
 
@@ -3324,7 +3322,7 @@ async def slash_pointlog(interaction: discord.Interaction, limit: int = 10):
         return
     
     embed = discord.Embed(
-        title="📜 RECENT POINT TRANSACTIONS",
+        title="ðŸ“œ RECENT POINT TRANSACTIONS",
         color=0x9b59b6,
         timestamp=datetime.now()
     )
@@ -3338,7 +3336,7 @@ async def slash_pointlog(interaction: discord.Interaction, limit: int = 10):
         mod = interaction.guild.get_member(int(entry['mod'])) if 'mod' in entry else None
         mod_name = mod.display_name if mod else "System"
         
-        emoji = "➕" if entry['type'] == 'add' else "➖" if entry['type'] == 'remove' else "🔄"
+        emoji = "âž•" if entry['type'] == 'add' else "âž–" if entry['type'] == 'remove' else "ðŸ”„"
         house_emoji = data['houses'][entry['house']]['emoji'] if entry['house'] in data['houses'] else ""
         
         value = f"{house_emoji} **{entry['points']}** points by {mod_name}"
@@ -3359,7 +3357,7 @@ async def slash_pointlog(interaction: discord.Interaction, limit: int = 10):
 @bot.tree.command(name="checkin", description="Daily check-in to earn points")
 async def slash_checkin(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first! Use `/sort`", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first! Use `/sort`", ephemeral=True)
         return
     
     user_id = str(interaction.user.id)
@@ -3372,7 +3370,7 @@ async def slash_checkin(interaction: discord.Interaction):
     
     check = data['checkins'][user_id]
     if check['last'] == today:
-        await interaction.response.send_message(f"❌ {interaction.user.mention}, you've already checked in today!", ephemeral=True)
+        await interaction.response.send_message(f"âŒ {interaction.user.mention}, you've already checked in today!", ephemeral=True)
         return
     
     yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
@@ -3397,7 +3395,7 @@ async def slash_checkin(interaction: discord.Interaction):
     new_level = get_level_from_points(user['xp'])
     if new_level > old_level:
         user['level'] = new_level
-        level_msg = f"\n🌟 **LEVEL UP!** Now level {new_level}! 🌟"
+        level_msg = f"\nðŸŒŸ **LEVEL UP!** Now level {new_level}! ðŸŒŸ"
     else:
         level_msg = ""
     
@@ -3414,9 +3412,9 @@ async def slash_checkin(interaction: discord.Interaction):
         await award_achievement(user_id, 'streak_365')
     
     embed = discord.Embed(
-        title="✨ DAILY CHECK-IN ✨",
-      description=f"{get_random_spell_quote()}\n\n{interaction.user.mention} checked in for **{HOUSE_DATA[house]['name']}**!{level_msg}",
-    color=HOUSE_DATA[house]['color']
+        title="âœ¨ DAILY CHECK-IN âœ¨",
+   description=f"{get_random_spell_quote()}\n\n{interaction.user.mention} checked in for **{HOUSE_DATA[house]['name']}**!{level_msg}",
+        color=data['houses'][house]['color']
     )
     embed.add_field(name="Points", value=f"**{total_points}**", inline=True)
     embed.add_field(name="Streak", value=f"**{check['streak']}** days", inline=True)
@@ -3433,13 +3431,13 @@ async def slash_streak(interaction: discord.Interaction, member: Optional[discor
     user_id = str(target.id)
     
     if user_id not in data['users']:
-        await interaction.response.send_message(f"❌ {target.display_name} hasn't been sorted yet!", ephemeral=True)
+        await interaction.response.send_message(f"âŒ {target.display_name} hasn't been sorted yet!", ephemeral=True)
         return
     
     house = data['users'][user_id]['house']
     check = data['checkins'].get(user_id, {'streak': 0, 'longest': 0, 'total': 0})
     
-    embed = discord.Embed(title=f"📊 Check-in Stats: {target.display_name}", color=HOUSE_DATA[house]['color'])
+    embed = discord.Embed(title=f"ðŸ“Š Check-in Stats: {target.display_name}", color=data['houses'][house]['color'])
     embed.add_field(name="House", value=f"{data['houses'][house]['emoji']} {data['houses'][house]['name']}")
     embed.add_field(name="Current Streak", value=f"**{check['streak']}** days")
     embed.add_field(name="Longest Streak", value=f"**{check['longest']}** days")
@@ -3473,11 +3471,11 @@ class WandSelect(Select):
                 emoji=wand['emoji'],
                 value=wid
             ))
-        super().__init__(placeholder="🔮 Choose a wand to view details...", min_values=1, max_values=1, options=options)
+        super().__init__(placeholder="ðŸ”® Choose a wand to view details...", min_values=1, max_values=1, options=options)
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This shop isn't for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ This shop isn't for you!", ephemeral=True)
             return
         
         wand_id = self.values[0]
@@ -3490,18 +3488,18 @@ class WandSelect(Select):
             color=wand['color']
         )
         embed.set_image(url=wand['image_url'])
-        embed.add_field(name="💰 Price", value=f"{wand['price']} points", inline=True)
-        embed.add_field(name="⚡ Power", value=str(wand['power']), inline=True)
-        embed.add_field(name="✨ Rarity", value=wand['rarity'].title(), inline=True)
-        embed.add_field(name="🪄 Core", value=wand['core'], inline=True)
-        embed.add_field(name="🌳 Wood", value=wand['wood'], inline=True)
-        embed.add_field(name="📏 Length", value=wand['length'], inline=True)
-        embed.add_field(name="🎯 Flexibility", value=wand['flexibility'], inline=True)
-        embed.add_field(name="🔮 Magic Type", value=wand['magic_type'], inline=True)
-        embed.add_field(name="⚔️ Duel Bonus", value=f"+{wand['duel_bonus']}%", inline=True)
-        embed.add_field(name="✨ Special Spells", value=", ".join(wand['spells']), inline=False)
-        embed.add_field(name="🎁 Bonus", value=wand['bonus'], inline=False)
-        embed.add_field(name="💰 Your Points", value=f"**{user['points_contributed']}**", inline=False)
+        embed.add_field(name="ðŸ’° Price", value=f"{wand['price']} points", inline=True)
+        embed.add_field(name="âš¡ Power", value=str(wand['power']), inline=True)
+        embed.add_field(name="âœ¨ Rarity", value=wand['rarity'].title(), inline=True)
+        embed.add_field(name="ðŸª„ Core", value=wand['core'], inline=True)
+        embed.add_field(name="ðŸŒ³ Wood", value=wand['wood'], inline=True)
+        embed.add_field(name="ðŸ“ Length", value=wand['length'], inline=True)
+        embed.add_field(name="ðŸŽ¯ Flexibility", value=wand['flexibility'], inline=True)
+        embed.add_field(name="ðŸ”® Magic Type", value=wand['magic_type'], inline=True)
+        embed.add_field(name="âš”ï¸ Duel Bonus", value=f"+{wand['duel_bonus']}%", inline=True)
+        embed.add_field(name="âœ¨ Special Spells", value=", ".join(wand['spells']), inline=False)
+        embed.add_field(name="ðŸŽ Bonus", value=wand['bonus'], inline=False)
+        embed.add_field(name="ðŸ’° Your Points", value=f"**{user['points_contributed']}**", inline=False)
         
         view = View()
         view.add_item(WandBuyButton(wand_id, wand, self.user_id))
@@ -3514,7 +3512,7 @@ class WandBuyButton(Button):
         super().__init__(
             label=f"Buy for {wand_data['price']} points",
             style=discord.ButtonStyle.success,
-            emoji="💰",
+            emoji="ðŸ’°",
             custom_id=f"buy_wand_{wand_id}"
         )
         self.wand_id = wand_id
@@ -3523,15 +3521,15 @@ class WandBuyButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This isn't your shop!", ephemeral=True)
+            await interaction.response.send_message("âŒ This isn't your shop!", ephemeral=True)
             return
         
         user = data['users'][self.user_id]
         
         if user['points_contributed'] < self.wand_data['price']:
             embed = discord.Embed(
-                title="❌ Not Enough Points!",
-                description=f"You need **{self.wand_data['price']}** points but you only have **{user['points_contributed']}**!\n\nEarn more points by:\n• Daily check-ins (`/checkin`)\n• Playing Quidditch (`/quidditch`)\n• Winning duels (`/duel`)\n• Opening chests (`/chest`)",
+                title="âŒ Not Enough Points!",
+                description=f"You need **{self.wand_data['price']}** points but you only have **{user['points_contributed']}**!\n\nEarn more points by:\nâ€¢ Daily check-ins (`/checkin`)\nâ€¢ Playing Quidditch (`/quidditch`)\nâ€¢ Winning duels (`/duel`)\nâ€¢ Opening chests (`/chest`)",
                 color=0xff0000
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -3544,7 +3542,7 @@ class WandBuyButton(Button):
             confirm_view.add_item(CancelButton())
             
             embed = discord.Embed(
-                title="⚠️ Replace Wand?",
+                title="âš ï¸ Replace Wand?",
                 description=f"You already own **{user['wand']}**. Are you sure you want to replace it with **{self.wand_data['name']}**?\n\nYour old wand will be lost forever!",
                 color=0xffaa00
             )
@@ -3558,7 +3556,7 @@ class ConfirmWandReplaceButton(Button):
         super().__init__(
             label="Yes, replace my wand",
             style=discord.ButtonStyle.danger,
-            emoji="⚠️"
+            emoji="âš ï¸"
         )
         self.wand_id = wand_id
         self.wand_data = wand_data
@@ -3572,7 +3570,7 @@ class CancelButton(Button):
         super().__init__(
             label="Cancel",
             style=discord.ButtonStyle.secondary,
-            emoji="❌"
+            emoji="âŒ"
         )
     
     async def callback(self, interaction: discord.Interaction):
@@ -3583,20 +3581,20 @@ class WandInfoButton(Button):
         super().__init__(
             label="Your Wand",
             style=discord.ButtonStyle.secondary,
-            emoji="🪄",
+            emoji="ðŸª„",
             row=1
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         user = data['users'][self.user_id]
         if not user.get('wand'):
             embed = discord.Embed(
-                title="❌ No Wand",
+                title="âŒ No Wand",
                 description="You don't have a wand yet! Buy one from the shop above.",
                 color=0xff0000
             )
@@ -3612,7 +3610,7 @@ class WandInfoButton(Button):
         
         if wand_data:
             embed = discord.Embed(
-                title=f"🪄 Your Wand: {wand_data['name']}",
+                title=f"ðŸª„ Your Wand: {wand_data['name']}",
                 color=wand_data['color']
             )
             embed.add_field(name="Power", value=str(wand_data['power']))
@@ -3620,14 +3618,14 @@ class WandInfoButton(Button):
             embed.add_field(name="Wood", value=wand_data['wood'])
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            await interaction.response.send_message(f"🪄 Your wand: {user['wand']}", ephemeral=True)
+            await interaction.response.send_message(f"ðŸª„ Your wand: {user['wand']}", ephemeral=True)
 
 class BackToWandsButton(Button):
     def __init__(self, user_id):
         super().__init__(
             label="Back to Wands",
             style=discord.ButtonStyle.primary,
-            emoji="🔙"
+            emoji="ðŸ”™"
         )
         self.user_id = user_id
     
@@ -3647,7 +3645,7 @@ async def complete_wand_purchase(interaction, wand_id, wand_data, user_id):
     await award_achievement(user_id, 'wand_master')
     
     embed = discord.Embed(
-        title="🪄 WAND PURCHASED!",
+        title="ðŸª„ WAND PURCHASED!",
         description=f"{interaction.user.mention} now wields the **{wand_data['name']}**!\n\nThe wand chooses the wizard, and this wand has chosen you!",
         color=wand_data['color']
     )
@@ -3667,16 +3665,16 @@ async def show_wand_shop(interaction, user_id):
     user = data['users'][user_id]
     
     embed = discord.Embed(
-        title="🪄 OLLIVANDERS: Makers of Fine Wands since 382 BC",
+        title="ðŸª„ OLLIVANDERS: Makers of Fine Wands since 382 BC",
         description="*The wand chooses the wizard, remember...*",
         color=0x9b59b6
     )
     
     # Show owned wand
     if user.get('wand'):
-        embed.add_field(name="✨ Your Current Wand", value=user['wand'], inline=False)
+        embed.add_field(name="âœ¨ Your Current Wand", value=user['wand'], inline=False)
     
-    embed.add_field(name="💰 Your Points", value=f"**{user['points_contributed']}**", inline=False)
+    embed.add_field(name="ðŸ’° Your Points", value=f"**{user['points_contributed']}**", inline=False)
     embed.set_footer(text="Select a wand from the dropdown to see details!")
     
     view = WandView(user_id)
@@ -3685,7 +3683,7 @@ async def show_wand_shop(interaction, user_id):
 @bot.tree.command(name="wand", description="Visit Ollivanders wand shop")
 async def slash_wand(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first! Use `/sort`", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first! Use `/sort`", ephemeral=True)
         return
     
     await show_wand_shop(interaction, str(interaction.user.id))
@@ -3718,11 +3716,11 @@ class PetSelect(Select):
                 emoji=pet['emoji'],
                 value=pid
             ))
-        super().__init__(placeholder="🐾 Choose a magical pet...", min_values=1, max_values=1, options=options)
+        super().__init__(placeholder="ðŸ¾ Choose a magical pet...", min_values=1, max_values=1, options=options)
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This shop isn't for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ This shop isn't for you!", ephemeral=True)
             return
         
         pet_id = self.values[0]
@@ -3735,14 +3733,14 @@ class PetSelect(Select):
             color=pet['color']
         )
         embed.set_image(url=pet['image_url'])
-        embed.add_field(name="💰 Price", value=f"{pet['price']} points", inline=True)
-        embed.add_field(name="✨ Rarity", value=pet['rarity'].title(), inline=True)
-        embed.add_field(name="🎁 Bonus", value=pet['bonus'], inline=True)
-        embed.add_field(name="🌟 Special Ability", value=pet['special'], inline=False)
-        embed.add_field(name="❤️ Base Happiness", value=f"{pet['happiness']}%", inline=True)
-        embed.add_field(name="🍖 Base Hunger", value=f"{pet['hunger']}/100", inline=True)
-        embed.add_field(name="⭐ Favorite Food", value=pet['favorite_food'], inline=True)
-        embed.add_field(name="💰 Your Points", value=f"**{user['points_contributed']}**", inline=False)
+        embed.add_field(name="ðŸ’° Price", value=f"{pet['price']} points", inline=True)
+        embed.add_field(name="âœ¨ Rarity", value=pet['rarity'].title(), inline=True)
+        embed.add_field(name="ðŸŽ Bonus", value=pet['bonus'], inline=True)
+        embed.add_field(name="ðŸŒŸ Special Ability", value=pet['special'], inline=False)
+        embed.add_field(name="â¤ï¸ Base Happiness", value=f"{pet['happiness']}%", inline=True)
+        embed.add_field(name="ðŸ– Base Hunger", value=f"{pet['hunger']}/100", inline=True)
+        embed.add_field(name="â­ Favorite Food", value=pet['favorite_food'], inline=True)
+        embed.add_field(name="ðŸ’° Your Points", value=f"**{user['points_contributed']}**", inline=False)
         
         view = View()
         view.add_item(PetBuyButton(pet_id, pet, self.user_id))
@@ -3755,7 +3753,7 @@ class PetBuyButton(Button):
         super().__init__(
             label=f"Adopt for {pet_data['price']} points",
             style=discord.ButtonStyle.success,
-            emoji="🐾",
+            emoji="ðŸ¾",
             custom_id=f"buy_pet_{pet_id}"
         )
         self.pet_id = pet_id
@@ -3764,14 +3762,14 @@ class PetBuyButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This isn't your shop!", ephemeral=True)
+            await interaction.response.send_message("âŒ This isn't your shop!", ephemeral=True)
             return
         
         user = data['users'][self.user_id]
         
         if user['points_contributed'] < self.pet_data['price']:
             embed = discord.Embed(
-                title="❌ Not Enough Points!",
+                title="âŒ Not Enough Points!",
                 description=f"You need **{self.pet_data['price']}** points but you only have **{user['points_contributed']}**!",
                 color=0xff0000
             )
@@ -3785,7 +3783,7 @@ class PetBuyButton(Button):
             confirm_view.add_item(CancelButton())
             
             embed = discord.Embed(
-                title="⚠️ Replace Pet?",
+                title="âš ï¸ Replace Pet?",
                 description=f"You already have **{user['pet']}**. Are you sure you want to replace it with **{self.pet_data['name']}**?\n\nYour current pet will be released back into the wild!",
                 color=0xffaa00
             )
@@ -3799,7 +3797,7 @@ class ConfirmPetReplaceButton(Button):
         super().__init__(
             label="Yes, release my current pet",
             style=discord.ButtonStyle.danger,
-            emoji="⚠️"
+            emoji="âš ï¸"
         )
         self.pet_id = pet_id
         self.pet_data = pet_data
@@ -3813,20 +3811,20 @@ class PetInfoButton(Button):
         super().__init__(
             label="Your Pet",
             style=discord.ButtonStyle.secondary,
-            emoji="🐾",
+            emoji="ðŸ¾",
             row=1
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         user = data['users'][self.user_id]
         if not user.get('pet'):
             embed = discord.Embed(
-                title="❌ No Pet",
+                title="âŒ No Pet",
                 description="You don't have a pet yet! Adopt one from the shop above.",
                 color=0xff0000
             )
@@ -3834,12 +3832,12 @@ class PetInfoButton(Button):
             return
         
         embed = discord.Embed(
-            title=f"🐾 Your Pet: {user['pet']}",
+            title=f"ðŸ¾ Your Pet: {user['pet']}",
             color=0x9b59b6
         )
-        embed.add_field(name="❤️ Happiness", value=f"{user.get('pet_happiness', 80)}%")
-        embed.add_field(name="🍖 Hunger", value=f"{user.get('pet_hunger', 10)}/100")
-        embed.add_field(name="✨ Special", value=user.get('pet_special', 'None'))
+        embed.add_field(name="â¤ï¸ Happiness", value=f"{user.get('pet_happiness', 80)}%")
+        embed.add_field(name="ðŸ– Hunger", value=f"{user.get('pet_hunger', 10)}/100")
+        embed.add_field(name="âœ¨ Special", value=user.get('pet_special', 'None'))
         
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -3848,7 +3846,7 @@ class BackToPetsButton(Button):
         super().__init__(
             label="Back to Pets",
             style=discord.ButtonStyle.primary,
-            emoji="🔙"
+            emoji="ðŸ”™"
         )
         self.user_id = user_id
     
@@ -3889,7 +3887,7 @@ async def show_pet_shop(interaction, user_id):
     user = data['users'][user_id]
     
     embed = discord.Embed(
-        title="🐾 MAGICAL MENAGERIE",
+        title="ðŸ¾ MAGICAL MENAGERIE",
         description="*Find your perfect magical companion!*",
         color=0x9b59b6
     )
@@ -3897,12 +3895,12 @@ async def show_pet_shop(interaction, user_id):
     # Show owned pet
     if user.get('pet'):
         embed.add_field(
-            name="✨ Your Current Pet",
-            value=f"{user['pet']}\n❤️ {user.get('pet_happiness', 80)}% | 🍖 {user.get('pet_hunger', 10)}/100",
+            name="âœ¨ Your Current Pet",
+            value=f"{user['pet']}\nâ¤ï¸ {user.get('pet_happiness', 80)}% | ðŸ– {user.get('pet_hunger', 10)}/100",
             inline=False
         )
     
-    embed.add_field(name="💰 Your Points", value=f"**{user['points_contributed']}**", inline=False)
+    embed.add_field(name="ðŸ’° Your Points", value=f"**{user['points_contributed']}**", inline=False)
     embed.set_footer(text="Select a pet from the dropdown to see details!")
     
     view = PetView(user_id)
@@ -3911,7 +3909,7 @@ async def show_pet_shop(interaction, user_id):
 @bot.tree.command(name="pet", description="Visit the Magical Menagerie pet shop")
 async def slash_pet(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first! Use `/sort`", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first! Use `/sort`", ephemeral=True)
         return
     
     await show_pet_shop(interaction, str(interaction.user.id))
@@ -3939,7 +3937,7 @@ class ChestButton(Button):
         super().__init__(
             label=f"{chest_data['name']} ({chest_data['price']} pts)",
             style=discord.ButtonStyle.secondary,
-            emoji="🎁",
+            emoji="ðŸŽ",
             custom_id=f"chest_{chest_id}"
         )
         self.chest_id = chest_id
@@ -3948,14 +3946,14 @@ class ChestButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This isn't your chest game!", ephemeral=True)
+            await interaction.response.send_message("âŒ This isn't your chest game!", ephemeral=True)
             return
         
         user = data['users'][self.user_id]
         
         if user['points_contributed'] < self.chest_data['price']:
             embed = discord.Embed(
-                title="❌ Not Enough Points!",
+                title="âŒ Not Enough Points!",
                 description=f"You need **{self.chest_data['price']}** points but you only have **{user['points_contributed']}**!",
                 color=0xff0000
             )
@@ -3964,8 +3962,8 @@ class ChestButton(Button):
         
         # Show opening animation
         embed = discord.Embed(
-            title="🎁 Opening Chest...",
-            description="✨ *Magic swirls around the chest...*",
+            title="ðŸŽ Opening Chest...",
+            description="âœ¨ *Magic swirls around the chest...*",
             color=self.chest_data['color']
         )
         await interaction.response.edit_message(embed=embed, view=None)
@@ -3998,14 +3996,14 @@ class ChestButton(Button):
             user['points_contributed'] += amount
             reward_text = f"**{amount}** points"
             reward_value = amount
-            emoji = "💰"
+            emoji = "ðŸ’°"
             
         elif reward['type'] == 'xp':
             amount = random.randint(reward['min'], reward['max'])
             user['xp'] = user.get('xp', 0) + amount
             reward_text = f"**{amount}** XP"
             reward_value = amount
-            emoji = "✨"
+            emoji = "âœ¨"
             
         else:  # item
             item_name = random.choice(reward['items'])
@@ -4013,7 +4011,7 @@ class ChestButton(Button):
                 user['inventory'] = []
             user['inventory'].append(item_name)
             reward_text = f"**{item_name}**"
-            emoji = "📦"
+            emoji = "ðŸ“¦"
             
             # Check for special items
             if item_name in ['Resurrection Stone', 'Invisibility Cloak', 'Elder Wand', 'Marauders Map']:
@@ -4029,19 +4027,19 @@ class ChestButton(Button):
         if 'guaranteed' in self.chest_data and random.random() * 100 < self.chest_data['guaranteed']['chance']:
             bonus_item = self.chest_data['guaranteed']['item']
             user['inventory'].append(bonus_item)
-            bonus_text = f"\n\n🎉 **BONUS!** You also found a **{bonus_item}**!"
+            bonus_text = f"\n\nðŸŽ‰ **BONUS!** You also found a **{bonus_item}**!"
         else:
             bonus_text = ""
         
         # Create result embed
         embed = discord.Embed(
-            title=f"✨ {self.chest_data['name']} OPENED! ✨",
+            title=f"âœ¨ {self.chest_data['name']} OPENED! âœ¨",
             description=f"{interaction.user.mention} opened a {self.chest_data['name']}!{bonus_text}",
             color=self.chest_data['color']
         )
         embed.set_image(url=self.chest_data['image'])
         embed.add_field(name="You found:", value=f"{emoji} {reward_text}", inline=True)
-        embed.add_field(name="Points remaining", value=f"💰 **{user['points_contributed']}**", inline=True)
+        embed.add_field(name="Points remaining", value=f"ðŸ’° **{user['points_contributed']}**", inline=True)
         
         # Add stats
         total_chests = sum(user['chests_opened'].values())
@@ -4060,13 +4058,13 @@ class OpenAnotherChestButton(Button):
         super().__init__(
             label="Open Another Chest",
             style=discord.ButtonStyle.primary,
-            emoji="🎁"
+            emoji="ðŸŽ"
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         await show_chest_shop(interaction, self.user_id)
@@ -4076,7 +4074,7 @@ class LeaveChestButton(Button):
         super().__init__(
             label="Leave",
             style=discord.ButtonStyle.secondary,
-            emoji="👋"
+            emoji="ðŸ‘‹"
         )
     
     async def callback(self, interaction: discord.Interaction):
@@ -4086,7 +4084,7 @@ async def show_chest_shop(interaction, user_id):
     user = data['users'][user_id]
     
     embed = discord.Embed(
-        title="🎁 MAGICAL CHESTS",
+        title="ðŸŽ MAGICAL CHESTS",
         description="Choose a chest to open! Each chest contains random rewards.",
         color=0x9b59b6
     )
@@ -4099,8 +4097,8 @@ async def show_chest_shop(interaction, user_id):
             inline=False
         )
     
-    embed.add_field(name="💰 Your Points", value=f"**{user['points_contributed']}**", inline=False)
-    embed.add_field(name="📊 Total Chests", value=f"**{sum(user.get('chests_opened', {}).values())}**", inline=True)
+    embed.add_field(name="ðŸ’° Your Points", value=f"**{user['points_contributed']}**", inline=False)
+    embed.add_field(name="ðŸ“Š Total Chests", value=f"**{sum(user.get('chests_opened', {}).values())}**", inline=True)
     
     view = ChestView(user_id)
     await interaction.response.send_message(embed=embed, view=view)
@@ -4108,7 +4106,7 @@ async def show_chest_shop(interaction, user_id):
 @bot.tree.command(name="chest", description="Open magical chests for rewards!")
 async def slash_chest(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first! Use `/sort`", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first! Use `/sort`", ephemeral=True)
         return
     
     await show_chest_shop(interaction, str(interaction.user.id))
@@ -4116,7 +4114,7 @@ async def slash_chest(interaction: discord.Interaction):
 @bot.tree.command(name="cheststats", description="View your chest opening statistics")
 async def slash_chest_stats(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     user_id = str(interaction.user.id)
@@ -4126,7 +4124,7 @@ async def slash_chest_stats(interaction: discord.Interaction):
     total = sum(chests.values())
     
     embed = discord.Embed(
-        title=f"📊 {interaction.user.display_name}'s Chest Statistics",
+        title=f"ðŸ“Š {interaction.user.display_name}'s Chest Statistics",
         color=0x9b59b6
     )
     
@@ -4139,7 +4137,7 @@ async def slash_chest_stats(interaction: discord.Interaction):
                 inline=True
             )
     
-    embed.add_field(name="📦 Total Chests", value=f"**{total}**", inline=False)
+    embed.add_field(name="ðŸ“¦ Total Chests", value=f"**{total}**", inline=False)
     
     await interaction.response.send_message(embed=embed)
   # ==========================================
@@ -4162,20 +4160,20 @@ class DuelChallengeView(View):
         for item in self.children:
             item.disabled = True
         if self.message:
-            await self.message.edit(content="⏰ Duel challenge expired.", view=self)
+            await self.message.edit(content="â° Duel challenge expired.", view=self)
 class AcceptDuelButton(Button):
     def __init__(self, challenger_id, opponent_id):
         super().__init__(
             label="Accept Duel",
             style=discord.ButtonStyle.success,
-            emoji="⚔️"
+            emoji="âš”ï¸"
         )
         self.challenger_id = challenger_id
         self.opponent_id = opponent_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.opponent_id:
-            await interaction.response.send_message("❌ This challenge isn't for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ This challenge isn't for you!", ephemeral=True)
             return
         
         challenger = interaction.guild.get_member(int(self.challenger_id))
@@ -4183,11 +4181,11 @@ class AcceptDuelButton(Button):
         
         # Check if both have wands
         if not data['users'][self.challenger_id].get('wand'):
-            await interaction.response.send_message(f"❌ {challenger.display_name} doesn't have a wand!", ephemeral=True)
+            await interaction.response.send_message(f"âŒ {challenger.display_name} doesn't have a wand!", ephemeral=True)
             return
         
         if not data['users'][self.opponent_id].get('wand'):
-            await interaction.response.send_message("❌ You need a wand to duel! Visit the wand shop with `/wand`", ephemeral=True)
+            await interaction.response.send_message("âŒ You need a wand to duel! Visit the wand shop with `/wand`", ephemeral=True)
             return
         
         # Initialize duel
@@ -4202,7 +4200,7 @@ class AcceptDuelButton(Button):
         }
         
         embed = discord.Embed(
-            title="⚔️ DUEL ACCEPTED! ⚔️",
+            title="âš”ï¸ DUEL ACCEPTED! âš”ï¸",
             description=f"{challenger.mention} vs {opponent.mention}\n\nThe duel will begin shortly...",
             color=0xffd700
         )
@@ -4216,11 +4214,11 @@ class DeclineDuelButton(Button):
         super().__init__(
             label="Decline",
             style=discord.ButtonStyle.danger,
-            emoji="❌"
+            emoji="âŒ"
         )
     
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.edit_message(content="❌ Duel declined.", embed=None, view=None)
+        await interaction.response.edit_message(content="âŒ Duel declined.", embed=None, view=None)
 
 async def start_duel(interaction, duel_id):
     duel = data['duels'][duel_id]
@@ -4247,7 +4245,7 @@ async def start_duel(interaction, duel_id):
     duel['questions'] = random.sample(all_questions, 5)
     
     embed = discord.Embed(
-        title="⚔️ THE DUEL BEGINS! ⚔️",
+        title="âš”ï¸ THE DUEL BEGINS! âš”ï¸",
         description=f"{challenger.mention} vs {opponent.mention}\n\nFirst to win 3 rounds wins the duel!",
         color=0xffd700
     )
@@ -4268,7 +4266,7 @@ async def run_duel_round(interaction, duel_id, round_num):
     question = duel['questions'][round_num]
     
     embed = discord.Embed(
-        title=f"⚔️ ROUND {round_num + 1}/5",
+        title=f"âš”ï¸ ROUND {round_num + 1}/5",
         description=f"**{question['q']}**\n\nFirst to answer correctly wins this round!",
         color=0x9b59b6
     )
@@ -4298,7 +4296,7 @@ async def run_duel_round(interaction, duel_id, round_num):
             speed_bonus = max(0, 10 - time_taken)
             
             embed = discord.Embed(
-                title="✅ CORRECT!",
+                title="âœ… CORRECT!",
                 description=f"{winner_mention} wins the round!",
                 color=0x00ff00
             )
@@ -4309,7 +4307,7 @@ async def run_duel_round(interaction, duel_id, round_num):
         else:
             # Wrong answer - other person gets a chance?
             embed = discord.Embed(
-                title="❌ INCORRECT!",
+                title="âŒ INCORRECT!",
                 description=f"{answer_msg.author.mention} got it wrong!",
                 color=0xff0000
             )
@@ -4322,7 +4320,7 @@ async def run_duel_round(interaction, duel_id, round_num):
         
     except asyncio.TimeoutError:
         embed = discord.Embed(
-            title="⏰ TIME'S UP!",
+            title="â° TIME'S UP!",
             description="No one answered in time. Moving to next round...",
             color=0xffaa00
         )
@@ -4353,7 +4351,7 @@ async def end_duel(interaction, duel_id):
     else:
         # Tie
         embed = discord.Embed(
-            title="🤝 IT'S A TIE!",
+            title="ðŸ¤ IT'S A TIE!",
             description=f"{challenger.mention} and {opponent.mention} are equally matched!",
             color=0x808080
         )
@@ -4397,7 +4395,7 @@ async def end_duel(interaction, duel_id):
         await award_achievement(str(winner.id), 'duel_master')
     
     embed = discord.Embed(
-        title="🏆 DUEL VICTORY! 🏆",
+        title="ðŸ† DUEL VICTORY! ðŸ†",
         description=f"{winner.mention} wins the duel {winner_score}-{loser_score}!",
         color=0xffd700
     )
@@ -4413,30 +4411,30 @@ async def end_duel(interaction, duel_id):
 @app_commands.describe(opponent="The user to challenge")
 async def slash_duel(interaction: discord.Interaction, opponent: discord.Member):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     if opponent == interaction.user:
-        await interaction.response.send_message("❌ You can't duel yourself!", ephemeral=True)
+        await interaction.response.send_message("âŒ You can't duel yourself!", ephemeral=True)
         return
     
     if opponent.bot:
-        await interaction.response.send_message("❌ You can't duel a bot!", ephemeral=True)
+        await interaction.response.send_message("âŒ You can't duel a bot!", ephemeral=True)
         return
     
     opponent_id = str(opponent.id)
     if opponent_id not in data['users']:
-        await interaction.response.send_message(f"❌ {opponent.display_name} hasn't been sorted yet!", ephemeral=True)
+        await interaction.response.send_message(f"âŒ {opponent.display_name} hasn't been sorted yet!", ephemeral=True)
         return
     
     challenger_id = str(interaction.user.id)
     
     if challenger_id in data.get('duels', {}):
-        await interaction.response.send_message("❌ You're already in a duel!", ephemeral=True)
+        await interaction.response.send_message("âŒ You're already in a duel!", ephemeral=True)
         return
     
     embed = discord.Embed(
-        title="⚔️ DUEL CHALLENGE ⚔️",
+        title="âš”ï¸ DUEL CHALLENGE âš”ï¸",
         description=f"{interaction.user.mention} challenges {opponent.mention} to a wizard's duel!\n\n{opponent.mention}, click below to accept!",
         color=0xff0000
     )
@@ -4459,10 +4457,10 @@ class QuidditchView(View):
         self.user_id = user_id
         
         positions = [
-            ("Chaser", "🎯", discord.ButtonStyle.primary),
-            ("Beater", "🏏", discord.ButtonStyle.success),
-            ("Keeper", "🥅", discord.ButtonStyle.secondary),
-            ("Seeker", "✨", discord.ButtonStyle.danger)
+            ("Chaser", "ðŸŽ¯", discord.ButtonStyle.primary),
+            ("Beater", "ðŸ", discord.ButtonStyle.success),
+            ("Keeper", "ðŸ¥…", discord.ButtonStyle.secondary),
+            ("Seeker", "âœ¨", discord.ButtonStyle.danger)
         ]
         
         for position, emoji, style in positions:
@@ -4486,7 +4484,7 @@ class QuidditchPositionButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This isn't your game!", ephemeral=True)
+            await interaction.response.send_message("âŒ This isn't your game!", ephemeral=True)
             return
         
         await play_quidditch_position(interaction, self.position, self.user_id)
@@ -4503,7 +4501,7 @@ async def play_quidditch_position(interaction, position, user_id):
             time_left = timedelta(hours=1) - (datetime.now() - last_time)
             minutes = int(time_left.total_seconds() / 60)
             embed = discord.Embed(
-                title="❌ Cooldown",
+                title="âŒ Cooldown",
                 description=f"You need to wait {minutes} minutes before playing Quidditch again!",
                 color=0xff0000
             )
@@ -4573,17 +4571,17 @@ async def play_quidditch_position(interaction, position, user_id):
     
     # Create embed
     embed = discord.Embed(
-        title="🧹 QUIDDITCH MATCH",
+        title="ðŸ§¹ QUIDDITCH MATCH",
         description=f"{interaction.user.mention} plays as **{position}**!",
-        color=HOUSE_DATA[house]['color']
+        color=data['houses'][house]['color']
     )
     
     if points > 0:
-        embed.add_field(name="✨ Result", value=f"**{result}** +{points} points{bonus_msg}")
+        embed.add_field(name="âœ¨ Result", value=f"**{result}** +{points} points{bonus_msg}")
     else:
-        embed.add_field(name="❌ Result", value=f"**{result}** {points} points{bonus_msg}")
+        embed.add_field(name="âŒ Result", value=f"**{result}** {points} points{bonus_msg}")
     
-    embed.add_field(name="🏆 Total Quidditch Points", value=str(user.get('quidditch_points', 0)))
+    embed.add_field(name="ðŸ† Total Quidditch Points", value=str(user.get('quidditch_points', 0)))
     
     await interaction.response.edit_message(embed=embed, view=None)
     save_data()
@@ -4591,12 +4589,12 @@ async def play_quidditch_position(interaction, position, user_id):
 @bot.tree.command(name="quidditch", description="Play a game of Quidditch")
 async def slash_quidditch(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     view = QuidditchView(str(interaction.user.id))
     embed = discord.Embed(
-        title="🧹 QUIDDITCH PITCH",
+        title="ðŸ§¹ QUIDDITCH PITCH",
         description="Choose your position!",
         color=0x9b59b6
     )
@@ -4605,14 +4603,14 @@ async def slash_quidditch(interaction: discord.Interaction):
 @bot.tree.command(name="quidditchstats", description="View your Quidditch statistics")
 async def slash_quidditch_stats(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     user_id = str(interaction.user.id)
     user = data['users'][user_id]
     
     embed = discord.Embed(
-        title=f"🧹 {interaction.user.display_name}'s Quidditch Stats",
+        title=f"ðŸ§¹ {interaction.user.display_name}'s Quidditch Stats",
         color=data['houses'][user['house']]['color']
     )
     embed.add_field(name="Total Points", value=str(user.get('quidditch_points', 0)))
@@ -4628,17 +4626,17 @@ class TriviaDifficultySelect(Select):
     def __init__(self, user_id):
         self.user_id = user_id
         options = [
-            discord.SelectOption(label="Easy", value="easy", emoji="🟢", description="10-15 points"),
-            discord.SelectOption(label="Medium", value="medium", emoji="🟡", description="15-25 points"),
-            discord.SelectOption(label="Hard", value="hard", emoji="🟠", description="25-50 points"),
-            discord.SelectOption(label="Extreme", value="extreme", emoji="🔴", description="50-200 points"),
-            discord.SelectOption(label="Random", value="random", emoji="🎲", description="Random difficulty")
+            discord.SelectOption(label="Easy", value="easy", emoji="ðŸŸ¢", description="10-15 points"),
+            discord.SelectOption(label="Medium", value="medium", emoji="ðŸŸ¡", description="15-25 points"),
+            discord.SelectOption(label="Hard", value="hard", emoji="ðŸŸ ", description="25-50 points"),
+            discord.SelectOption(label="Extreme", value="extreme", emoji="ðŸ”´", description="50-200 points"),
+            discord.SelectOption(label="Random", value="random", emoji="ðŸŽ²", description="Random difficulty")
         ]
         super().__init__(placeholder="Choose difficulty...", options=options)
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not your trivia game!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not your trivia game!", ephemeral=True)
             return
         
         difficulty = self.values[0]
@@ -4648,7 +4646,7 @@ class TriviaDifficultySelect(Select):
         question = trivia.get_question(difficulty)
         
         embed = discord.Embed(
-            title=f"🎮 TRIVIA - {difficulty.upper()}",
+            title=f"ðŸŽ® TRIVIA - {difficulty.upper()}",
             description=f"**{question['q']}**",
             color=0x9b59b6
         )
@@ -4667,15 +4665,15 @@ class TriviaDifficultySelect(Select):
 @bot.tree.command(name="trivia", description="Test your Harry Potter knowledge!")
 @app_commands.describe(difficulty="Choose difficulty level")
 @app_commands.choices(difficulty=[
-    app_commands.Choice(name="🟢 Easy", value="easy"),
-    app_commands.Choice(name="🟡 Medium", value="medium"),
-    app_commands.Choice(name="🟠 Hard", value="hard"),
-    app_commands.Choice(name="🔴 Extreme", value="extreme"),
-    app_commands.Choice(name="🎲 Random", value="random")
+    app_commands.Choice(name="ðŸŸ¢ Easy", value="easy"),
+    app_commands.Choice(name="ðŸŸ¡ Medium", value="medium"),
+    app_commands.Choice(name="ðŸŸ  Hard", value="hard"),
+    app_commands.Choice(name="ðŸ”´ Extreme", value="extreme"),
+    app_commands.Choice(name="ðŸŽ² Random", value="random")
 ])
 async def slash_trivia(interaction: discord.Interaction, difficulty: str = "random"):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     if difficulty == "random":
@@ -4684,7 +4682,7 @@ async def slash_trivia(interaction: discord.Interaction, difficulty: str = "rand
     question = trivia.get_question(difficulty)
     
     embed = discord.Embed(
-        title=f"🎮 TRIVIA - {difficulty.upper()}",
+        title=f"ðŸŽ® TRIVIA - {difficulty.upper()}",
         description=f"**{question['q']}**",
         color=0x9b59b6
     )
@@ -4743,7 +4741,7 @@ async def slash_trivia(interaction: discord.Interaction, difficulty: str = "rand
                 await award_achievement(user_id, 'trivia_master')
             
             embed = discord.Embed(
-                title="🎉 CORRECT!",
+                title="ðŸŽ‰ CORRECT!",
                 description=f"{interaction.user.mention} got it right in {time_taken} seconds!",
                 color=0x00ff00
             )
@@ -4754,14 +4752,14 @@ async def slash_trivia(interaction: discord.Interaction, difficulty: str = "rand
             await interaction.channel.send(embed=embed)
             save_data()
         else:
-            await interaction.channel.send(f"❌ Sorry {interaction.user.mention}, that's incorrect. The answer was: **{question['a']}**")
+            await interaction.channel.send(f"âŒ Sorry {interaction.user.mention}, that's incorrect. The answer was: **{question['a']}**")
         
         del trivia.active_games[str(interaction.user.id)]
         
     except asyncio.TimeoutError:
         if str(interaction.user.id) in trivia.active_games:
             del trivia.active_games[str(interaction.user.id)]
-        await interaction.channel.send(f"⏰ Time's up {interaction.user.mention}! The answer was: **{question['a']}**")
+        await interaction.channel.send(f"â° Time's up {interaction.user.mention}! The answer was: **{question['a']}**")
 
 @bot.tree.command(name="trivialeaderboard", description="View the top trivia players")
 async def slash_trivia_leaderboard(interaction: discord.Interaction):
@@ -4776,7 +4774,7 @@ async def slash_trivia_leaderboard(interaction: discord.Interaction):
     users.sort(key=lambda x: x[1], reverse=True)
     
     embed = discord.Embed(
-        title="🎮 TRIVIA LEADERBOARD",
+        title="ðŸŽ® TRIVIA LEADERBOARD",
         description="Top trivia masters of Hogwarts!",
         color=0x9b59b6
     )
@@ -4785,7 +4783,7 @@ async def slash_trivia_leaderboard(interaction: discord.Interaction):
         embed.description = "No trivia wins yet! Play `/trivia` to get started!"
     else:
         for i, (name, wins, house) in enumerate(users[:10], 1):
-            medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else "📌"
+            medal = "ðŸ¥‡" if i == 1 else "ðŸ¥ˆ" if i == 2 else "ðŸ¥‰" if i == 3 else "ðŸ“Œ"
             embed.add_field(
                 name=f"{medal} {i}. {name}",
                 value=f"{HOUSE_DATA[house]['emoji']} **{wins}** wins",
@@ -4818,7 +4816,7 @@ class MaraudersMapView(View):
         for item in self.children:
             item.disabled = True
         if self.message:
-            await self.message.edit(content="🗺️ *Mischief Managed*", view=self)
+            await self.message.edit(content="ðŸ—ºï¸ *Mischief Managed*", view=self)
 class LocationSelect(Select):
     def __init__(self, user_id):
         self.user_id = user_id
@@ -4830,18 +4828,18 @@ class LocationSelect(Select):
                 emoji=loc['emoji'],
                 value=loc['name']
             ))
-        super().__init__(placeholder="🔍 Where would you like to look?", options=options)
+        super().__init__(placeholder="ðŸ” Where would you like to look?", options=options)
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This map isn't for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ This map isn't for you!", ephemeral=True)
             return
         
         location_name = self.values[0]
         location = next((loc for loc in MAP_LOCATIONS if loc['name'] == location_name), None)
         
         if not location:
-            await interaction.response.send_message("❌ Location not found!", ephemeral=True)
+            await interaction.response.send_message("âŒ Location not found!", ephemeral=True)
             return
         
         await show_location_details(interaction, location, self.user_id)
@@ -4850,14 +4848,14 @@ class AreaFilterSelect(Select):
     def __init__(self, user_id):
         self.user_id = user_id
         areas = list(set(loc['area'] for loc in MAP_LOCATIONS))
-        options = [discord.SelectOption(label="All Areas", value="all", emoji="🗺️")]
+        options = [discord.SelectOption(label="All Areas", value="all", emoji="ðŸ—ºï¸")]
         for area in sorted(areas):
             options.append(discord.SelectOption(label=area, value=area))
-        super().__init__(placeholder="📌 Filter by area...", options=options[:5], row=1)
+        super().__init__(placeholder="ðŸ“Œ Filter by area...", options=options[:5], row=1)
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         area = self.values[0]
@@ -4868,14 +4866,14 @@ class SecretPassagesButton(Button):
         super().__init__(
             label="Secret Passages",
             style=discord.ButtonStyle.secondary,
-            emoji="🚪",
+            emoji="ðŸšª",
             row=2
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         await show_secret_passages(interaction, self.user_id)
@@ -4885,14 +4883,14 @@ class FindFriendsButton(Button):
         super().__init__(
             label="Find Friends",
             style=discord.ButtonStyle.primary,
-            emoji="👥",
+            emoji="ðŸ‘¥",
             row=2
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         await find_friends(interaction, self.user_id)
@@ -4924,20 +4922,20 @@ async def show_location_details(interaction, location, user_id):
                 house = data['users'][str(member.id)]['house']
                 member_list.append(f"{HOUSE_DATA[house]['emoji']} {member.display_name}")
             else:
-                member_list.append(f"👤 {member.display_name}")
+                member_list.append(f"ðŸ‘¤ {member.display_name}")
         
         embed.add_field(
-            name="👥 Currently here:",
+            name="ðŸ‘¥ Currently here:",
             value="\n".join(member_list),
             inline=False
         )
     else:
-        embed.add_field(name="👥 Currently here:", value="No one...", inline=False)
+        embed.add_field(name="ðŸ‘¥ Currently here:", value="No one...", inline=False)
     
     # Show teachers
     if location['teachers']:
         embed.add_field(
-            name="👨‍🏫 Teachers:",
+            name="ðŸ‘¨â€ðŸ« Teachers:",
             value=", ".join(location['teachers']),
             inline=False
         )
@@ -4953,7 +4951,7 @@ async def show_location_details(interaction, location, user_id):
         "Playing chess",
         "Sleeping (tsk tsk)"
     ]
-    embed.add_field(name="📋 Activity", value=random.choice(activities), inline=True)
+    embed.add_field(name="ðŸ“‹ Activity", value=random.choice(activities), inline=True)
     
     # Atmosphere
     atmospheres = [
@@ -4964,7 +4962,7 @@ async def show_location_details(interaction, location, user_id):
         "Eerily silent",
         "Magical energy flowing"
     ]
-    embed.add_field(name="✨ Atmosphere", value=random.choice(atmospheres), inline=True)
+    embed.add_field(name="âœ¨ Atmosphere", value=random.choice(atmospheres), inline=True)
     
     embed.set_footer(text=f"Map last updated: {datetime.now().strftime('%H:%M:%S')}")
     
@@ -4980,7 +4978,7 @@ async def show_filtered_locations(interaction, area, user_id):
         locations = [loc for loc in MAP_LOCATIONS if loc['area'] == area]
     
     embed = discord.Embed(
-        title=f"🗺️ {area if area != 'all' else 'All'} Locations",
+        title=f"ðŸ—ºï¸ {area if area != 'all' else 'All'} Locations",
         description=f"Found **{len(locations)}** locations",
         color=0x2ecc71
     )
@@ -5003,7 +5001,7 @@ async def show_secret_passages(interaction, user_id):
     discovered = user.get('secret_passages', [])
     
     embed = discord.Embed(
-        title="🚪 SECRET PASSAGES",
+        title="ðŸšª SECRET PASSAGES",
         description="*I solemnly swear that I am up to no good...*",
         color=0x9b59b6
     )
@@ -5011,19 +5009,19 @@ async def show_secret_passages(interaction, user_id):
     for passage in SECRET_PASSAGES:
         if passage['from'] in discovered:
             embed.add_field(
-                name=f"✅ {passage['from']} → {passage['to']}",
+                name=f"âœ… {passage['from']} â†’ {passage['to']}",
                 value=f"Password: ||{passage['password']}||",
                 inline=False
             )
         else:
             embed.add_field(
-                name=f"❓ {passage['from']} → ???",
+                name=f"â“ {passage['from']} â†’ ???",
                 value="Undiscovered",
                 inline=False
             )
     
     embed.add_field(
-        name="🔍 To discover passages",
+        name="ðŸ” To discover passages",
         value="Explore different locations using the map!",
         inline=False
     )
@@ -5043,7 +5041,7 @@ async def find_friends(interaction, user_id):
                 online_friends.append(member)
     
     embed = discord.Embed(
-        title="👥 ONLINE FRIENDS",
+        title="ðŸ‘¥ ONLINE FRIENDS",
         description=f"**{len(online_friends)}** wizards currently online",
         color=0x2ecc71
     )
@@ -5053,9 +5051,9 @@ async def find_friends(interaction, user_id):
         for house in HOUSE_DATA.keys():
             house_members = [m for m in online_friends if str(m.id) in data['users'] and data['users'][str(m.id)]['house'] == house]
             if house_members:
-                member_names = "\n".join([f"• {m.display_name}" for m in house_members[:5]])
+                member_names = "\n".join([f"â€¢ {m.display_name}" for m in house_members[:5]])
                 if len(house_members) > 5:
-                    member_names += f"\n• ...and {len(house_members)-5} more"
+                    member_names += f"\nâ€¢ ...and {len(house_members)-5} more"
                 embed.add_field(
                     name=f"{HOUSE_DATA[house]['emoji']} {HOUSE_DATA[house]['name']}",
                     value=member_names,
@@ -5066,7 +5064,7 @@ async def find_friends(interaction, user_id):
         unsorted = [m for m in online_friends if str(m.id) not in data['users']]
         if unsorted:
             embed.add_field(
-                name="👤 Unsorted",
+                name="ðŸ‘¤ Unsorted",
                 value=", ".join([m.display_name for m in unsorted[:5]]),
                 inline=False
             )
@@ -5083,7 +5081,7 @@ class BackToMapButton(Button):
         super().__init__(
             label="Back to Map",
             style=discord.ButtonStyle.primary,
-            emoji="🗺️"
+            emoji="ðŸ—ºï¸"
         )
         self.user_id = user_id
     
@@ -5096,8 +5094,8 @@ async def show_marauders_map(interaction, user_id):
     # Check if user has map access
     if user.get('map_access', 0) <= 0:
         embed = discord.Embed(
-            title="❌ No Map Access",
-            description="You don't have the Marauder's Map! Find it in:\n• Mythic Chests\n• Secret Rooms\n• Special Quests",
+            title="âŒ No Map Access",
+            description="You don't have the Marauder's Map! Find it in:\nâ€¢ Mythic Chests\nâ€¢ Secret Rooms\nâ€¢ Special Quests",
             color=0xff0000
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -5107,7 +5105,7 @@ async def show_marauders_map(interaction, user_id):
     user['map_access'] = user.get('map_access', 1) - 1
     
     embed = discord.Embed(
-        title="🗺️ MARAUDER'S MAP",
+        title="ðŸ—ºï¸ MARAUDER'S MAP",
         description="*I solemnly swear that I am up to no good...*",
         color=0x2ecc71
     )
@@ -5116,14 +5114,14 @@ async def show_marauders_map(interaction, user_id):
     total_locations = len(MAP_LOCATIONS)
     discovered = len(user.get('secret_passages', []))
     
-    embed.add_field(name="📍 Locations", value=str(total_locations), inline=True)
-    embed.add_field(name="🔍 Passages Found", value=str(discovered), inline=True)
-    embed.add_field(name="🎫 Uses Left", value=str(user.get('map_access', 0)), inline=True)
+    embed.add_field(name="ðŸ“ Locations", value=str(total_locations), inline=True)
+    embed.add_field(name="ðŸ” Passages Found", value=str(discovered), inline=True)
+    embed.add_field(name="ðŸŽ« Uses Left", value=str(user.get('map_access', 0)), inline=True)
     
     # Show random locations preview
     preview = random.sample(MAP_LOCATIONS, 3)
     preview_text = "\n".join([f"{loc['emoji']} {loc['name']} ({loc['area']})" for loc in preview])
-    embed.add_field(name="📌 Recent Activity", value=preview_text, inline=False)
+    embed.add_field(name="ðŸ“Œ Recent Activity", value=preview_text, inline=False)
     
     embed.set_footer(text="Select a location from the dropdown to explore!")
     
@@ -5134,7 +5132,7 @@ async def show_marauders_map(interaction, user_id):
 @bot.tree.command(name="map", description="Use the Marauder's Map to explore Hogwarts")
 async def slash_map(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     await show_marauders_map(interaction, str(interaction.user.id))
@@ -5142,7 +5140,7 @@ async def slash_map(interaction: discord.Interaction):
 @bot.tree.command(name="buymap", description="Buy a Marauder's Map (500 points)")
 async def slash_buy_map(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     user_id = str(interaction.user.id)
@@ -5151,14 +5149,14 @@ async def slash_buy_map(interaction: discord.Interaction):
     map_price = 500
     
     if user['points_contributed'] < map_price:
-        await interaction.response.send_message(f"❌ You need {map_price} points! You have {user['points_contributed']}", ephemeral=True)
+        await interaction.response.send_message(f"âŒ You need {map_price} points! You have {user['points_contributed']}", ephemeral=True)
         return
     
     user['points_contributed'] -= map_price
     user['map_access'] = user.get('map_access', 0) + 3
     
     embed = discord.Embed(
-        title="🗺️ MAP PURCHASED!",
+        title="ðŸ—ºï¸ MAP PURCHASED!",
         description=f"{interaction.user.mention} bought a Marauder's Map!\nYou now have **{user['map_access']}** uses.",
         color=0x2ecc71
     )
@@ -5201,11 +5199,11 @@ class SecretRoomSelect(Select):
                 emoji=room['emoji'],
                 value=room_id
             ))
-        super().__init__(placeholder="🔍 Choose a secret room to explore...", options=options[:10])
+        super().__init__(placeholder="ðŸ” Choose a secret room to explore...", options=options[:10])
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ This isn't your exploration!", ephemeral=True)
+            await interaction.response.send_message("âŒ This isn't your exploration!", ephemeral=True)
             return
         
         room_id = self.values[0]
@@ -5218,14 +5216,14 @@ class FoundSecretsButton(Button):
         super().__init__(
             label="My Discoveries",
             style=discord.ButtonStyle.primary,
-            emoji="🏆",
+            emoji="ðŸ†",
             row=1
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         await show_discovered_rooms(interaction, self.user_id)
@@ -5235,14 +5233,14 @@ class RoomHintsButton(Button):
         super().__init__(
             label="Get a Hint",
             style=discord.ButtonStyle.secondary,
-            emoji="💡",
+            emoji="ðŸ’¡",
             row=1
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         await give_random_hint(interaction, self.user_id)
@@ -5257,15 +5255,15 @@ async def show_room_details(interaction, room_id, room, user_id):
         color=0x9b59b6
     )
     
-    embed.add_field(name="📍 Location", value=room['location'], inline=True)
-    embed.add_field(name="🚪 Entrance", value=room['entrance'], inline=True)
-    embed.add_field(name="⚠️ Danger", value=room['danger'], inline=True)
+    embed.add_field(name="ðŸ“ Location", value=room['location'], inline=True)
+    embed.add_field(name="ðŸšª Entrance", value=room['entrance'], inline=True)
+    embed.add_field(name="âš ï¸ Danger", value=room['danger'], inline=True)
     
     if room_id in discovered:
-        embed.add_field(name="✅ Discovered!", value=f"You found this room!\nTreasure: {room['treasure']}", inline=False)
-        embed.add_field(name="📜 History", value=room['history'], inline=False)
+        embed.add_field(name="âœ… Discovered!", value=f"You found this room!\nTreasure: {room['treasure']}", inline=False)
+        embed.add_field(name="ðŸ“œ History", value=room['history'], inline=False)
     else:
-        embed.add_field(name="❓ Undiscovered", value=f"Hint: {room['hint']}", inline=False)
+        embed.add_field(name="â“ Undiscovered", value=f"Hint: {room['hint']}", inline=False)
         
         # Add attempt button
         view = View()
@@ -5285,7 +5283,7 @@ class AttemptRoomButton(Button):
         super().__init__(
             label="Attempt to Enter",
             style=discord.ButtonStyle.danger,
-            emoji="🚪"
+            emoji="ðŸšª"
         )
         self.room_id = room_id
         self.room_data = room_data
@@ -5293,7 +5291,7 @@ class AttemptRoomButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not for you!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not for you!", ephemeral=True)
             return
         
         # Create password modal
@@ -5328,7 +5326,7 @@ class SecretRoomModal(Modal):
                 user['secrets_found'] = []
             
             if self.room_id in user['secrets_found']:
-                await interaction.response.send_message("❌ You already found this secret!", ephemeral=True)
+                await interaction.response.send_message("âŒ You already found this secret!", ephemeral=True)
                 return
             
             user['secrets_found'].append(self.room_id)
@@ -5351,26 +5349,26 @@ class SecretRoomModal(Modal):
                 await award_achievement(self.user_id, 'secret_hunter')
             
             embed = discord.Embed(
-                title=f"✨ SECRET FOUND: {self.room_data['name']} ✨",
+                title=f"âœ¨ SECRET FOUND: {self.room_data['name']} âœ¨",
                 description=self.room_data['description'],
                 color=0x00ff00
             )
-            embed.add_field(name="📍 Location", value=self.room_data['location'], inline=True)
-            embed.add_field(name="📜 History", value=self.room_data['history'], inline=False)
-            embed.add_field(name="💰 Rewards", value=f"**{points}** points\n**{xp}** XP\n📦 **{self.room_data['item']}**", inline=False)
+            embed.add_field(name="ðŸ“ Location", value=self.room_data['location'], inline=True)
+            embed.add_field(name="ðŸ“œ History", value=self.room_data['history'], inline=False)
+            embed.add_field(name="ðŸ’° Rewards", value=f"**{points}** points\n**{xp}** XP\nðŸ“¦ **{self.room_data['item']}**", inline=False)
             
             await interaction.response.send_message(embed=embed)
             save_data()
         else:
             # Wrong password
-            await interaction.response.send_message(f"❌ Wrong password! Hint: {self.room_data['hint']}", ephemeral=True)
+            await interaction.response.send_message(f"âŒ Wrong password! Hint: {self.room_data['hint']}", ephemeral=True)
 
 async def show_discovered_rooms(interaction, user_id):
     user = data['users'][user_id]
     discovered = user.get('secrets_found', [])
     
     embed = discord.Embed(
-        title=f"🏆 {interaction.user.display_name}'s Discoveries",
+        title=f"ðŸ† {interaction.user.display_name}'s Discoveries",
         description=f"You have found **{len(discovered)}** out of **{len(SECRET_ROOMS)}** secret rooms!",
         color=0xffd700
     )
@@ -5380,7 +5378,7 @@ async def show_discovered_rooms(interaction, user_id):
             if room_id in SECRET_ROOMS:
                 room = SECRET_ROOMS[room_id]
                 embed.add_field(
-                    name=f"✅ {room['emoji']} {room['name']}",
+                    name=f"âœ… {room['emoji']} {room['name']}",
                     value=f"*{room['location']}*",
                     inline=True
                 )
@@ -5400,13 +5398,13 @@ async def give_random_hint(interaction, user_id):
     undiscovered = [room for room_id, room in SECRET_ROOMS.items() if room_id not in discovered]
     
     if not undiscovered:
-        await interaction.response.send_message("🎉 You've found all the secrets! You're a true Hogwarts explorer!", ephemeral=True)
+        await interaction.response.send_message("ðŸŽ‰ You've found all the secrets! You're a true Hogwarts explorer!", ephemeral=True)
         return
     
     room = random.choice(undiscovered)
     
     embed = discord.Embed(
-        title="💡 SECRET ROOM HINT",
+        title="ðŸ’¡ SECRET ROOM HINT",
         description=f"**{room['name']}**\n\nHint: {room['hint']}",
         color=0xffaa00
     )
@@ -5419,7 +5417,7 @@ class BackToRoomsButton(Button):
         super().__init__(
             label="Back to Rooms",
             style=discord.ButtonStyle.primary,
-            emoji="🔙"
+            emoji="ðŸ”™"
         )
         self.user_id = user_id
     
@@ -5431,23 +5429,23 @@ async def show_secret_rooms_menu(interaction, user_id):
     discovered = len(user.get('secrets_found', []))
     
     embed = discord.Embed(
-        title="🔍 SECRET ROOMS OF HOGWARTS",
+        title="ðŸ” SECRET ROOMS OF HOGWARTS",
         description=f"*Legends speak of hidden chambers throughout the castle...*\n\nYou have discovered **{discovered}** out of **{len(SECRET_ROOMS)}** secret rooms!",
         color=0x9b59b6
     )
     
     # Show progress
     progress = int((discovered / len(SECRET_ROOMS)) * 20)
-    bar = "█" * progress + "░" * (20 - progress)
-    embed.add_field(name="📊 Discovery Progress", value=f"`{bar}`", inline=False)
+    bar = "â–ˆ" * progress + "â–‘" * (20 - progress)
+    embed.add_field(name="ðŸ“Š Discovery Progress", value=f"`{bar}`", inline=False)
     
     # Show some room previews
     preview = random.sample(list(SECRET_ROOMS.items()), min(3, len(SECRET_ROOMS)))
     preview_text = ""
     for room_id, room in preview:
-        status = "✅" if room_id in user.get('secrets_found', []) else "❓"
+        status = "âœ…" if room_id in user.get('secrets_found', []) else "â“"
         preview_text += f"{status} {room['emoji']} **{room['name']}** - {room['location']}\n"
-    embed.add_field(name="📌 Featured Rooms", value=preview_text, inline=False)
+    embed.add_field(name="ðŸ“Œ Featured Rooms", value=preview_text, inline=False)
     
     embed.set_footer(text="Select a room from the dropdown to explore!")
     
@@ -5457,7 +5455,7 @@ async def show_secret_rooms_menu(interaction, user_id):
 @bot.tree.command(name="secrets", description="Search for hidden rooms and secrets")
 async def slash_secrets(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     await show_secret_rooms_menu(interaction, str(interaction.user.id))
@@ -5465,7 +5463,7 @@ async def slash_secrets(interaction: discord.Interaction):
 @bot.tree.command(name="roomhint", description="Get a hint for an undiscovered secret room")
 async def slash_room_hint(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     await give_random_hint(interaction, str(interaction.user.id))
@@ -5473,7 +5471,7 @@ async def slash_room_hint(interaction: discord.Interaction):
 @bot.tree.command(name="secretstats", description="View your secret room discovery progress")
 async def slash_secret_stats(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     user_id = str(interaction.user.id)
@@ -5481,7 +5479,7 @@ async def slash_secret_stats(interaction: discord.Interaction):
     discovered = user.get('secrets_found', [])
     
     embed = discord.Embed(
-        title=f"🔍 {interaction.user.display_name}'s Secret Discovery Progress",
+        title=f"ðŸ” {interaction.user.display_name}'s Secret Discovery Progress",
         color=0x9b59b6
     )
     
@@ -5489,7 +5487,7 @@ async def slash_secret_stats(interaction: discord.Interaction):
     found = len(discovered)
     percentage = (found / total) * 100
     
-    embed.add_field(name="📊 Total Found", value=f"**{found}/{total}** ({percentage:.1f}%)", inline=False)
+    embed.add_field(name="ðŸ“Š Total Found", value=f"**{found}/{total}** ({percentage:.1f}%)", inline=False)
     
     await interaction.response.send_message(embed=embed)
 
@@ -5527,16 +5525,16 @@ class QuestCategorySelect(Select):
     def __init__(self, user_id):
         self.user_id = user_id
         options = [
-            discord.SelectOption(label="Daily Quests", value="daily", emoji="📅", description="Repeat daily"),
-            discord.SelectOption(label="Weekly Quests", value="weekly", emoji="📆", description="Repeat weekly"),
-            discord.SelectOption(label="Special Quests", value="special", emoji="✨", description="One-time only"),
-            discord.SelectOption(label="Achievement Quests", value="achievement", emoji="🏆", description="Long-term goals")
+            discord.SelectOption(label="Daily Quests", value="daily", emoji="ðŸ“…", description="Repeat daily"),
+            discord.SelectOption(label="Weekly Quests", value="weekly", emoji="ðŸ“†", description="Repeat weekly"),
+            discord.SelectOption(label="Special Quests", value="special", emoji="âœ¨", description="One-time only"),
+            discord.SelectOption(label="Achievement Quests", value="achievement", emoji="ðŸ†", description="Long-term goals")
         ]
-        super().__init__(placeholder="📋 Select quest category...", options=options)
+        super().__init__(placeholder="ðŸ“‹ Select quest category...", options=options)
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not your quest log!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not your quest log!", ephemeral=True)
             return
         
         category = self.values[0]
@@ -5547,14 +5545,14 @@ class ActiveQuestsButton(Button):
         super().__init__(
             label="Active Quests",
             style=discord.ButtonStyle.primary,
-            emoji="📋",
+            emoji="ðŸ“‹",
             row=1
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not your quest log!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not your quest log!", ephemeral=True)
             return
         
         await show_active_quests(interaction, self.user_id)
@@ -5564,14 +5562,14 @@ class CompletedQuestsButton(Button):
         super().__init__(
             label="Completed",
             style=discord.ButtonStyle.success,
-            emoji="✅",
+            emoji="âœ…",
             row=1
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not your quest log!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not your quest log!", ephemeral=True)
             return
         
         await show_completed_quests(interaction, self.user_id)
@@ -5581,14 +5579,14 @@ class ClaimRewardsButton(Button):
         super().__init__(
             label="Claim Rewards",
             style=discord.ButtonStyle.danger,
-            emoji="💰",
+            emoji="ðŸ’°",
             row=1
         )
         self.user_id = user_id
     
     async def callback(self, interaction: discord.Interaction):
         if str(interaction.user.id) != self.user_id:
-            await interaction.response.send_message("❌ Not your quest log!", ephemeral=True)
+            await interaction.response.send_message("âŒ Not your quest log!", ephemeral=True)
             return
         
         await claim_quest_rewards(interaction, self.user_id)
@@ -5598,7 +5596,7 @@ async def show_quest_category(interaction, user_id, category):
     quests_data = user.get('quests', {})
     
     embed = discord.Embed(
-        title=f"📋 {category.title()} Quests",
+        title=f"ðŸ“‹ {category.title()} Quests",
         color=0x9b59b6
     )
     
@@ -5609,7 +5607,7 @@ async def show_quest_category(interaction, user_id, category):
             # Quest is active
             progress = quests_data[qid]
             percent = int((progress['current'] / progress['target']) * 100)
-            bar = "█" * int(percent/5) + "░" * (20 - int(percent/5))
+            bar = "â–ˆ" * int(percent/5) + "â–‘" * (20 - int(percent/5))
             
             embed.add_field(
                 name=f"{quest['emoji']} {quest['name']} (In Progress)",
@@ -5634,7 +5632,7 @@ async def show_active_quests(interaction, user_id):
     quests_data = user.get('quests', {})
     
     embed = discord.Embed(
-        title=f"📋 {interaction.user.display_name}'s Active Quests",
+        title=f"ðŸ“‹ {interaction.user.display_name}'s Active Quests",
         color=0x9b59b6
     )
     
@@ -5645,7 +5643,7 @@ async def show_active_quests(interaction, user_id):
             if qid in QUESTS:
                 quest = QUESTS[qid]
                 percent = int((progress['current'] / progress['target']) * 100)
-                bar = "█" * int(percent/5) + "░" * (20 - int(percent/5))
+                bar = "â–ˆ" * int(percent/5) + "â–‘" * (20 - int(percent/5))
                 
                 embed.add_field(
                     name=f"{quest['emoji']} {quest['name']}",
@@ -5663,7 +5661,7 @@ async def show_completed_quests(interaction, user_id):
     completed = user.get('completed_quests', [])
     
     embed = discord.Embed(
-        title=f"✅ {interaction.user.display_name}'s Completed Quests",
+        title=f"âœ… {interaction.user.display_name}'s Completed Quests",
         description=f"Total: **{len(completed)}** quests completed",
         color=0x00ff00
     )
@@ -5696,7 +5694,7 @@ async def claim_quest_rewards(interaction, user_id):
             completed.append(qid)
     
     if not completed:
-        await interaction.response.send_message("❌ No quests ready to claim!", ephemeral=True)
+        await interaction.response.send_message("âŒ No quests ready to claim!", ephemeral=True)
         return
     
     total_points = 0
@@ -5730,7 +5728,7 @@ async def claim_quest_rewards(interaction, user_id):
     data['houses'][user['house']]['points'] += total_points
     
     embed = discord.Embed(
-        title="💰 REWARDS CLAIMED!",
+        title="ðŸ’° REWARDS CLAIMED!",
         description=f"Claimed **{len(completed)}** quest rewards!",
         color=0x00ff00
     )
@@ -5749,14 +5747,14 @@ async def show_quests_menu(interaction, user_id):
     completed = len(user.get('completed_quests', []))
     
     embed = discord.Embed(
-        title="📜 QUEST LOG",
+        title="ðŸ“œ QUEST LOG",
         description=f"*Adventure awaits, brave wizard!*",
         color=0x9b59b6
     )
     
-    embed.add_field(name="📋 Active Quests", value=str(active), inline=True)
-    embed.add_field(name="✅ Completed Quests", value=str(completed), inline=True)
-    embed.add_field(name="🏆 Total Available", value=str(len(QUESTS)), inline=True)
+    embed.add_field(name="ðŸ“‹ Active Quests", value=str(active), inline=True)
+    embed.add_field(name="âœ… Completed Quests", value=str(completed), inline=True)
+    embed.add_field(name="ðŸ† Total Available", value=str(len(QUESTS)), inline=True)
     
     # Show daily reset timer
     next_reset = datetime.now().replace(hour=0, minute=0, second=0) + timedelta(days=1)
@@ -5765,7 +5763,7 @@ async def show_quests_menu(interaction, user_id):
     minutes = int((time_until.total_seconds() % 3600) / 60)
     
     embed.add_field(
-        name="⏰ Daily Reset",
+        name="â° Daily Reset",
         value=f"New daily quests in {hours}h {minutes}m",
         inline=False
     )
@@ -5776,14 +5774,14 @@ async def show_quests_menu(interaction, user_id):
 @bot.tree.command(name="quests", description="View your quest log")
 async def slash_quests(interaction: discord.Interaction):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     await show_quests_menu(interaction, str(interaction.user.id))
 async def quest_autocomplete(interaction: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
     """Autocomplete function for quest names"""
-    print(f"🔍 Autocomplete called with: '{current}'")  # Debug print
-    print(f"👤 User: {interaction.user.name}")  # Debug print
+    print(f"ðŸ” Autocomplete called with: '{current}'")  # Debug print
+    print(f"ðŸ‘¤ User: {interaction.user.name}")  # Debug print
     
     quests = []
     user_id = str(interaction.user.id)
@@ -5793,8 +5791,8 @@ async def quest_autocomplete(interaction: discord.Interaction, current: str) -> 
     active_quests = user.get('quests', {})
     completed_quests = user.get('completed_quests', [])
     
-    print(f"📊 Active quests: {len(active_quests)}")  # Debug print
-    print(f"✅ Completed quests: {len(completed_quests)}")  # Debug print
+    print(f"ðŸ“Š Active quests: {len(active_quests)}")  # Debug print
+    print(f"âœ… Completed quests: {len(completed_quests)}")  # Debug print
     
     for qid, quest in QUESTS.items():
         # Skip if quest is already active or completed
@@ -5804,7 +5802,7 @@ async def quest_autocomplete(interaction: discord.Interaction, current: str) -> 
         if current.lower() in quest['name'].lower():
             # Create a nice display name with emoji and difficulty
             display_name = f"{quest['emoji']} {quest['name']} ({quest['difficulty'].title()})"
-            print(f"➕ Adding quest: {display_name}")  # Debug print
+            print(f"âž• Adding quest: {display_name}")  # Debug print
             quests.append(
                 app_commands.Choice(
                     name=display_name[:100],  # Discord has a 100 char limit
@@ -5812,7 +5810,7 @@ async def quest_autocomplete(interaction: discord.Interaction, current: str) -> 
                 )
             )
     
-    print(f"📤 Returning {len(quests)} quests")  # Debug print
+    print(f"ðŸ“¤ Returning {len(quests)} quests")  # Debug print
     return quests[:25]
 
 @bot.tree.command(name="startquest", description="Start a new quest")
@@ -5820,7 +5818,7 @@ async def quest_autocomplete(interaction: discord.Interaction, current: str) -> 
 @app_commands.autocomplete(quest=quest_autocomplete)
 async def slash_start_quest(interaction: discord.Interaction, quest: str):
     if not await slash_is_sorted(interaction):
-        await interaction.response.send_message("❌ You need to be sorted first!", ephemeral=True)
+        await interaction.response.send_message("âŒ You need to be sorted first!", ephemeral=True)
         return
     
     user_id = str(interaction.user.id)
@@ -5835,18 +5833,18 @@ async def slash_start_quest(interaction: discord.Interaction, quest: str):
             break
     
     if not found_quest:
-        await interaction.response.send_message("❌ Quest not found!", ephemeral=True)
+        await interaction.response.send_message("âŒ Quest not found!", ephemeral=True)
         return
     
     # Check if quest is already active
     user = data['users'].get(user_id, {})
     if found_id in user.get('quests', {}):
-        await interaction.response.send_message("❌ You already have this quest active!", ephemeral=True)
+        await interaction.response.send_message("âŒ You already have this quest active!", ephemeral=True)
         return
     
     # Check if quest is already completed
     if found_id in user.get('completed_quests', []):
-        await interaction.response.send_message("❌ You've already completed this quest!", ephemeral=True)
+        await interaction.response.send_message("âŒ You've already completed this quest!", ephemeral=True)
         return
     
     if await start_quest(user_id, found_id):
@@ -5862,7 +5860,7 @@ async def slash_start_quest(interaction: discord.Interaction, quest: str):
         
         await interaction.response.send_message(embed=embed)
     else:
-        await interaction.response.send_message("❌ Couldn't start quest!", ephemeral=True)
+        await interaction.response.send_message("âŒ Couldn't start quest!", ephemeral=True)
 
 
 class BackToQuestsButton(Button):
@@ -5870,7 +5868,7 @@ class BackToQuestsButton(Button):
         super().__init__(
             label="Back to Quests",
             style=discord.ButtonStyle.primary,
-            emoji="🔙"
+            emoji="ðŸ”™"
         )
         self.user_id = user_id
     
@@ -5886,27 +5884,27 @@ if __name__ == "__main__":
     import traceback
     import time
     
-    print("🚀 Starting bot initialization...")
+    print("ðŸš€ Starting bot initialization...")
     
     # Get token from environment variable
     token = os.environ.get('DISCORD_TOKEN')
     
     if not token:
-        print("⚠️ No DISCORD_TOKEN environment variable found.")
+        print("âš ï¸ No DISCORD_TOKEN environment variable found.")
         token = input("Please enter your Discord bot token: ").strip()
     
     if not token:
-        print("❌ ERROR: No token provided!")
+        print("âŒ ERROR: No token provided!")
         sys.exit(1)
     
-    print(f"✅ Token found (length: {len(token)} characters)")
-    print(f"⏰ Waiting 10 seconds to avoid rate limits...")
-    time.sleep(10)  # ← THIS is the right place for it
+    print(f"âœ… Token found (length: {len(token)} characters)")
+    print(f"â° Waiting 10 seconds to avoid rate limits...")
+    time.sleep(10)  # â† THIS is the right place for it
     
     try:
-        print("🔄 Attempting to start bot...")
+        print("ðŸ”„ Attempting to start bot...")
         bot.run(token)
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"âŒ Error: {e}")
         traceback.print_exc()
         sys.exit(1)

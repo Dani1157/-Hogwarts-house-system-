@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 import sys
 from discord import app_commands
 import discord
@@ -3416,7 +3416,7 @@ async def slash_checkin(interaction: discord.Interaction):
     embed = discord.Embed(
         title="✨ DAILY CHECK-IN ✨",
       description=f"{get_random_spell_quote()}\n\n{interaction.user.mention} checked in for **{HOUSE_DATA[house]['name']}**!{level_msg}",
-    color=HOUSE_DATA[house]['color']
+        color=data['houses'][house]['color']
     )
     embed.add_field(name="Points", value=f"**{total_points}**", inline=True)
     embed.add_field(name="Streak", value=f"**{check['streak']}** days", inline=True)
@@ -3439,7 +3439,7 @@ async def slash_streak(interaction: discord.Interaction, member: Optional[discor
     house = data['users'][user_id]['house']
     check = data['checkins'].get(user_id, {'streak': 0, 'longest': 0, 'total': 0})
     
-    embed = discord.Embed(title=f"📊 Check-in Stats: {target.display_name}", color=HOUSE_DATA[house]['color'])
+    embed = discord.Embed(title=f"📊 Check-in Stats: {target.display_name}", color=data['houses'][house]['color'])
     embed.add_field(name="House", value=f"{data['houses'][house]['emoji']} {data['houses'][house]['name']}")
     embed.add_field(name="Current Streak", value=f"**{check['streak']}** days")
     embed.add_field(name="Longest Streak", value=f"**{check['longest']}** days")
@@ -4575,7 +4575,7 @@ async def play_quidditch_position(interaction, position, user_id):
     embed = discord.Embed(
         title="🧹 QUIDDITCH MATCH",
         description=f"{interaction.user.mention} plays as **{position}**!",
-        color=HOUSE_DATA[house]['color']
+        color=data['houses'][house]['color']
     )
     
     if points > 0:

@@ -1,21 +1,106 @@
-﻿{
-    "houses": {
-        "gryffindor": {"points": 0, "weekly": 0, "monthly": 0},
-        "slytherin": {"points": 0, "weekly": 0, "monthly": 0},
-        "ravenclaw": {"points": 0, "weekly": 0, "monthly": 0},
-        "hufflepuff": {"points": 0, "weekly": 0, "monthly": 0}
+{
+  "houses": {
+    "gryffindor": {
+      "points": 100,
+      "weekly": 100,
+      "monthly": 100
     },
-    "users": {},
-    "checkins": {},
-    "history": [],
-    "duels": {},
-    "achievements": {},
-    "inventory": {},
-    "chests_opened": {},
-    "quests": {},
-    "secrets_found": {},
-    "map_access": {},
-    "spells_learned": {},
-    "classes_attended": {},
-    "battle_pass": {}
+    "slytherin": {
+      "points": 3593,
+      "weekly": 3443,
+      "monthly": 3443
+    },
+    "ravenclaw": {
+      "points": 0,
+      "weekly": 0,
+      "monthly": 0
+    },
+    "hufflepuff": {
+      "points": 0,
+      "weekly": 0,
+      "monthly": 0
+    }
+  },
+  "users": {
+    "740575982460862584": {
+      "name": "dani0569.",
+      "display_name": "dani0569.",
+      "house": "slytherin",
+      "points_contributed": 3043,
+      "checkins": 1,
+      "joined": "2026-03-10T17:38:53.601245",
+      "level": 5,
+      "xp": 3543,
+      "title": "Student",
+      "bio": "",
+      "favorite_spell": "",
+      "pet": "Kneazle Cat",
+      "wand": null,
+      "achievements": [
+        {
+          "id": "first_checkin",
+          "name": "First Check-in",
+          "emoji": "\ud83d\udc63",
+          "earned": "2026-03-10T17:52:47.947904"
+        },
+        {
+          "id": "pet_collector",
+          "name": "Animal Friend",
+          "emoji": "\ud83d\udc3e",
+          "earned": "2026-03-10T17:56:12.651139"
+        }
+      ],
+      "badges": [],
+      "duels_won": 0,
+      "duels_lost": 0,
+      "quidditch_points": 0,
+      "inventory": [],
+      "spells_learned": [],
+      "secrets_found": [],
+      "quests": {},
+      "chests_opened": {},
+      "last_class": {},
+      "battle_pass": {
+        "tier": 1,
+        "points": 0,
+        "claimed": []
+      },
+      "map_access": 2,
+      "pet_id": "cat",
+      "pet_happiness": 90,
+      "pet_hunger": 15,
+      "pet_ability": "Detects danger, loyal companion",
+      "pet_special": "Warns of untrustworthy people",
+      "pet_favorite_food": "Fish"
+    }
+  },
+  "checkins": {
+    "740575982460862584": {
+      "last": "2026-03-10",
+      "streak": 1,
+      "total": 1,
+      "longest": 1
+    }
+  },
+  "history": [
+    {
+      "timestamp": "2026-03-10T17:55:29.991690",
+      "type": "add",
+      "user": "740575982460862584",
+      "mod": 740575982460862584,
+      "house": "slytherin",
+      "points": 3333,
+      "reason": ""
+    }
+  ],
+  "duels": {},
+  "achievements": {},
+  "inventory": {},
+  "chests_opened": {},
+  "quests": {},
+  "secrets_found": {},
+  "map_access": {},
+  "spells_learned": {},
+  "classes_attended": {},
+  "battle_pass": {}
 }
