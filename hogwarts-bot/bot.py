@@ -5885,8 +5885,17 @@ if __name__ == "__main__":
     import os
     import sys
     import traceback
+    import time
     
     print("🚀 Starting bot initialization...")
+    print(f"📂 Current working directory: {os.getcwd()}")
+    print(f"📁 Files in current directory: {os.listdir('.')}")
+    
+    # Check if data directory exists
+    if os.path.exists('data'):
+        print(f"📁 Data directory found. Contents: {os.listdir('data')}")
+    else:
+        print("⚠️ Data directory not found, will be created")
     
     # Try to get token from environment variable (for Render)
     token = os.environ.get('DISCORD_TOKEN')
@@ -5901,6 +5910,8 @@ if __name__ == "__main__":
         sys.exit(1)
     
     print(f"✅ Token found (length: {len(token)} characters)")
+    print(f"⏰ Waiting 10 seconds to avoid rate limits...")
+    time.sleep(10)
     
     try:
         print("🔄 Attempting to start bot...")
@@ -5916,8 +5927,9 @@ if __name__ == "__main__":
         sys.exit(1)
     except Exception as e:
         print(f"❌ Unexpected error: {type(e).__name__}: {e}")
-        print("\nFull traceback:")
+        print("\n🔍 Full traceback:")
         traceback.print_exc()
+        print("\n📋 System info:")
+        print(f"Python version: {sys.version}")
+        print(f"Discord.py version: {discord.__version__}")
         sys.exit(1)
-
-
