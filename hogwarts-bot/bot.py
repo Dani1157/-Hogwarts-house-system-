@@ -5789,28 +5789,43 @@ class BackToQuestsButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         await show_quests_menu(interaction, self.user_id)
-       
-     # ==========================================
+   
+            exit(1)
+    
+# ==========================================
 # RUN THE BOT
 # ==========================================
 if __name__ == "__main__":
     import os
+    import sys
+    import traceback
+    
+    print("🚀 Starting bot initialization...")
     
     # Get token from environment variable (set in Render dashboard)
     token = os.environ.get('DISCORD_TOKEN')
     
     if not token:
-        # Fallback for local testing
-        token = input("Enter your Discord bot token: ").strip()
+        print("❌ ERROR: DISCORD_TOKEN environment variable not found!")
+        print("Please set it in your Render dashboard.")
+        sys.exit(1)
     
-    if token:
-        try:
-            bot.run(token)
-        except discord.errors.PrivilegedIntentsRequired:
-            print("❌ Error: Privileged Intents not enabled!")
-            print("Go to: https://discord.com/developers/applications/")
-            print("Click your bot → Bot → Enable ALL Privileged Gateway Intents")
-        except Exception as e:
-            print(f"❌ Error: {e}")
-    else:
-        print("❌ No token provided! Set DISCORD_TOKEN environment variable.")
+    print(f"✅ Token found (length: {len(token)} characters)")
+    
+    try:
+        print("🔄 Attempting to start bot...")
+        bot.run(token)
+    except discord.errors.PrivilegedIntentsRequired:
+        print("❌ Error: Privileged Intents not enabled!")
+        print("Go to: https://discord.com/developers/applications/")
+        print("Click your bot → Bot → Enable ALL Privileged Gateway Intents")
+        sys.exit(1)
+    except discord.errors.LoginFailure:
+        print("❌ Error: Invalid token!")
+        print("Your Discord token is incorrect. Generate a new one.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Unexpected error: {type(e).__name__}: {e}")
+        print("\nFull traceback:")
+        traceback.print_exc()
+        sys.exit(1)
