@@ -5789,10 +5789,7 @@ class BackToQuestsButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         await show_quests_menu(interaction, self.user_id)
-   
-            exit(1)
-    
-# ==========================================
+    # ==========================================
 # RUN THE BOT
 # ==========================================
 if __name__ == "__main__":
