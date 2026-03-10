@@ -373,10 +373,11 @@ PETS = {
         'food': ['Meat', 'Coal', 'Dragon Treats'], 'max_hunger': 100,
         'favorite_food': 'Meat', 'evolves_at': 300
     },
-    'hippogriff': {
+       'hippogriff': {
         'name': 'Hippogriff', 'price': 1500, 'bonus': '+75 flying',
-        'emoji': '🦅🐴', 'image_url': 'https://i.imgur.com/Y6kYqUu.png',
-        'color': 0xd35400, 'rarity': 'legendary', 'ability': 'Fly anywhere, proud creature',
+        'emoji': '🦅',  # Use just the eagle emoji
+        'image_url': 'https://i.imgur.com/Y6kYqUu.png', 'color': 0xd35400,
+        'rarity': 'legendary', 'ability': 'Fly anywhere, proud creature',
         'hunger': 40, 'happiness': 95, 'special': 'Must bow first',
         'food': ['Insects', 'Meat', 'Hippogriff Feed'], 'max_hunger': 100,
         'favorite_food': 'Insects', 'evolves_at': 250
@@ -2314,8 +2315,14 @@ def load_data():
         with open(DATA_FILE, 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        return {
-            'houses': {h: {'points': 0, 'weekly': 0, 'monthly': 0, 'house_cup_wins': 0, 'quidditch_wins': 0, **HOUSE_DATA[h]} for h in HOUSE_DATA},
+        # Create default data structure
+        default_data = {
+            'houses': {
+                'gryffindor': {'points': 0, 'weekly': 0, 'monthly': 0},
+                'slytherin': {'points': 0, 'weekly': 0, 'monthly': 0},
+                'ravenclaw': {'points': 0, 'weekly': 0, 'monthly': 0},
+                'hufflepuff': {'points': 0, 'weekly': 0, 'monthly': 0}
+            },
             'users': {},
             'checkins': {},
             'history': [],
@@ -2327,24 +2334,27 @@ def load_data():
             'secrets_found': {},
             'map_access': {},
             'spells_learned': {},
-            'potions_made': {},
             'classes_attended': {},
-            'battle_pass': {},
-            'tournaments': {},
-            'marathons': {},
-            'wands': {},
-            'pets': {},
-            'active_games': {},
-            'market': {},
-            'guilds': {}
+            'battle_pass': {}
         }
+        return default_data
+    
 
 def save_data():
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=2)
 
 data = load_data()
-
+# Ensure all required keys exist
+if 'users' not in data:
+    data['users'] = {}
+if 'checkins' not in data:
+    data['checkins'] = {}
+if 'history' not in data:
+    data['history'] = []
+if 'duels' not in data:
+    data['duels'] = {}
+# Add any other keys that might be missing
 # ==========================================
 # HELPER FUNCTIONS
 # ==========================================
@@ -3234,7 +3244,7 @@ async def slash_scores(interaction: discord.Interaction, period: str = "all"):
         percentage = (points / total_points * 100) if total_points > 0 else 0
         
         embed.add_field(
-            name=f"{info['emoji']} **{info['name']}**",
+            name=f"{HOUSE_DATA[house]['emoji']} **{HOUSE_DATA[house]['name']}**",
             value=f"```\n{bar}\n```**{format_points(points)}** points | {member_count} members | {percentage:.1f}%",
             inline=False
         )
@@ -3248,7 +3258,7 @@ async def slash_scores(interaction: discord.Interaction, period: str = "all"):
     )
     
     # Add house cup wins
-    cup_wins = "\n".join([f"{data['houses'][h]['emoji']} {data['houses'][h]['name']}: {data['houses'][h].get('house_cup_wins', 0)} wins" for h in data['houses']])
+    cup_wins = "\n".join([f"{HOUSE_DATA[h]['emoji']} {HOUSE_DATA[h]['name']}: {data['houses'][h].get('house_cup_wins', 0)} wins" for h in data['houses']])
     embed.add_field(name="🏆 HOUSE CUP HISTORY", value=cup_wins, inline=False)
     
     await interaction.response.send_message(embed=embed)
@@ -3357,7 +3367,7 @@ async def slash_checkin(interaction: discord.Interaction):
     
     embed = discord.Embed(
         title="✨ DAILY CHECK-IN ✨",
-        description=f"{get_random_spell_quote()}\n\n{interaction.user.mention} checked in for **{data['houses'][house]['name']}**!{level_msg}",
+      description=f"{get_random_spell_quote()}\n\n{interaction.user.mention} checked in for **{HOUSE_DATA[house]['name']}**!{level_msg}",
         color=data['houses'][house]['color']
     )
     embed.add_field(name="Points", value=f"**{total_points}**", inline=True)
@@ -3390,18 +3400,20 @@ async def slash_streak(interaction: discord.Interaction, member: Optional[discor
     # ==========================================
 # SLASH COMMANDS - WAND SHOP
 # ==========================================
+
 class WandView(View):
     def __init__(self, user_id):
         super().__init__(timeout=120)
         self.user_id = user_id
+        self.message = None
         self.add_item(WandSelect(user_id))
         self.add_item(WandInfoButton(user_id))
     
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-        await self.message.edit(view=self)
-
+        if self.message:
+            await self.message.edit(view=self)
 class WandSelect(Select):
     def __init__(self, user_id):
         self.user_id = user_id
@@ -3637,13 +3649,15 @@ class PetView(View):
     def __init__(self, user_id):
         super().__init__(timeout=120)
         self.user_id = user_id
+        self.message = None
         self.add_item(PetSelect(user_id))
         self.add_item(PetInfoButton(user_id))
     
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-        await self.message.edit(view=self)
+        if self.message:
+            await self.message.edit(view=self)
 
 class PetSelect(Select):
     def __init__(self, user_id):
@@ -3854,13 +3868,14 @@ async def slash_pet(interaction: discord.Interaction):
     
     await show_pet_shop(interaction, str(interaction.user.id))
 
-# ==========================================
+## ==========================================
 # SLASH COMMANDS - CHEST SYSTEM
 # ==========================================
 class ChestView(View):
     def __init__(self, user_id):
         super().__init__(timeout=60)
         self.user_id = user_id
+        self.message = None
         
         for cid, chest in CHEST_REWARDS.items():
             self.add_item(ChestButton(cid, chest, user_id))
@@ -3868,7 +3883,8 @@ class ChestView(View):
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-        await self.message.edit(view=self)
+        if self.message:
+            await self.message.edit(view=self)
 
 class ChestButton(Button):
     def __init__(self, chest_id, chest_data, user_id):
@@ -4078,7 +4094,7 @@ async def slash_chest_stats(interaction: discord.Interaction):
     embed.add_field(name="📦 Total Chests", value=f"**{total}**", inline=False)
     
     await interaction.response.send_message(embed=embed)
-    # ==========================================
+  # ==========================================
 # SLASH COMMANDS - DUEL SYSTEM
 # ==========================================
 class DuelChallengeView(View):
@@ -4086,6 +4102,7 @@ class DuelChallengeView(View):
         super().__init__(timeout=60)
         self.challenger_id = challenger_id
         self.opponent_id = opponent_id
+        self.message = None
         self.add_item(AcceptDuelButton(challenger_id, opponent_id))
         self.add_item(DeclineDuelButton())
     
@@ -4096,8 +4113,8 @@ class DuelChallengeView(View):
             del data['duels'][challenger]
         for item in self.children:
             item.disabled = True
-        await self.message.edit(content="⏰ Duel challenge expired.", view=self)
-
+        if self.message:
+            await self.message.edit(content="⏰ Duel challenge expired.", view=self)
 class AcceptDuelButton(Button):
     def __init__(self, challenger_id, opponent_id):
         super().__init__(
@@ -4218,7 +4235,7 @@ async def run_duel_round(interaction, duel_id, round_num):
         answer_msg = await bot.wait_for('message', timeout=30.0, check=check)
         
         # Check if answer is correct
-        is_correct = answer_msg.content.lower().replace(' ', '') == question['a'].lower().replace(' ', '')
+        is_correct = answer_msg.content.lower().strip().replace(' ', '') == question['a'].lower().strip().replace(' ', '')
         
         if is_correct:
             if answer_msg.author == challenger:
@@ -4728,13 +4745,14 @@ async def slash_trivia_leaderboard(interaction: discord.Interaction):
             )
     
     await interaction.response.send_message(embed=embed)
-    # ==========================================
+   # ==========================================
 # SLASH COMMANDS - MARAUDER'S MAP
 # ==========================================
 class MaraudersMapView(View):
     def __init__(self, user_id):
         super().__init__(timeout=120)
         self.user_id = user_id
+        self.message = None
         
         # Location selection dropdown
         self.add_item(LocationSelect(user_id))
@@ -4751,8 +4769,8 @@ class MaraudersMapView(View):
     async def on_timeout(self):
         for item in self.children:
             item.disabled = True
-        await self.message.edit(content="🗺️ *Mischief Managed*", view=self)
-
+        if self.message:
+            await self.message.edit(content="🗺️ *Mischief Managed*", view=self)
 class LocationSelect(Select):
     def __init__(self, user_id):
         self.user_id = user_id
@@ -5107,6 +5125,7 @@ class SecretRoomsView(View):
     def __init__(self, user_id):
         super().__init__(timeout=120)
         self.user_id = user_id
+        self.message = None
         
         # Room selection dropdown
         self.add_item(SecretRoomSelect(user_id))
@@ -5116,6 +5135,12 @@ class SecretRoomsView(View):
         
         # Room hints button
         self.add_item(RoomHintsButton(user_id))
+    
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            await self.message.edit(view=self)
 
 class SecretRoomSelect(Select):
     def __init__(self, user_id):
@@ -5423,10 +5448,14 @@ async def slash_secret_stats(interaction: discord.Interaction):
 # ==========================================
 # SLASH COMMANDS - QUESTS
 # ==========================================
+# ==========================================
+# SLASH COMMANDS - QUESTS
+# ==========================================
 class QuestView(View):
     def __init__(self, user_id):
         super().__init__(timeout=120)
         self.user_id = user_id
+        self.message = None
         
         # Quest category selector
         self.add_item(QuestCategorySelect(user_id))
@@ -5439,6 +5468,12 @@ class QuestView(View):
         
         # Claim rewards button
         self.add_item(ClaimRewardsButton(user_id))
+    
+    async def on_timeout(self):
+        for item in self.children:
+            item.disabled = True
+        if self.message:
+            await self.message.edit(view=self)
 
 class QuestCategorySelect(Select):
     def __init__(self, user_id):
@@ -5794,7 +5829,7 @@ class BackToQuestsButton(Button):
     async def callback(self, interaction: discord.Interaction):
         await show_quests_menu(interaction, self.user_id)
         
-    # ==========================================
+ # ==========================================
 # RUN THE BOT
 # ==========================================
 if __name__ == "__main__":
@@ -5804,12 +5839,16 @@ if __name__ == "__main__":
     
     print("🚀 Starting bot initialization...")
     
-    # Get token from environment variable (set in Render dashboard)
+    # Try to get token from environment variable (for Render)
     token = os.environ.get('DISCORD_TOKEN')
     
+    # If no environment variable, ask for it (for local testing)
     if not token:
-        print("❌ ERROR: DISCORD_TOKEN environment variable not found!")
-        print("Please set it in your Render dashboard.")
+        print("⚠️ No DISCORD_TOKEN environment variable found.")
+        token = input("Please enter your Discord bot token: ").strip()
+    
+    if not token:
+        print("❌ ERROR: No token provided!")
         sys.exit(1)
     
     print(f"✅ Token found (length: {len(token)} characters)")
@@ -5831,3 +5870,5 @@ if __name__ == "__main__":
         print("\nFull traceback:")
         traceback.print_exc()
         sys.exit(1)
+
+

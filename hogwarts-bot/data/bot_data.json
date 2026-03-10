@@ -1,1 +1,21 @@
-{}
+﻿{
+    "houses": {
+        "gryffindor": {"points": 0, "weekly": 0, "monthly": 0},
+        "slytherin": {"points": 0, "weekly": 0, "monthly": 0},
+        "ravenclaw": {"points": 0, "weekly": 0, "monthly": 0},
+        "hufflepuff": {"points": 0, "weekly": 0, "monthly": 0}
+    },
+    "users": {},
+    "checkins": {},
+    "history": [],
+    "duels": {},
+    "achievements": {},
+    "inventory": {},
+    "chests_opened": {},
+    "quests": {},
+    "secrets_found": {},
+    "map_access": {},
+    "spells_learned": {},
+    "classes_attended": {},
+    "battle_pass": {}
+}
