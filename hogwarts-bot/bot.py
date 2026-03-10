@@ -5790,16 +5790,17 @@ class BackToQuestsButton(Button):
     async def callback(self, interaction: discord.Interaction):
         await show_quests_menu(interaction, self.user_id)
        
-       # ==========================================
+     # ==========================================
 # RUN THE BOT
 # ==========================================
 if __name__ == "__main__":
-    # Use environment variable for token (safer for hosting)
     import os
+    
+    # Get token from environment variable (set in Render dashboard)
     token = os.environ.get('DISCORD_TOKEN')
     
     if not token:
-        # Fallback to manual input if no env var (for local testing)
+        # Fallback for local testing
         token = input("Enter your Discord bot token: ").strip()
     
     if token:
@@ -5812,4 +5813,4 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"❌ Error: {e}")
     else:
-        print("❌ No token provided!")
+        print("❌ No token provided! Set DISCORD_TOKEN environment variable.")
