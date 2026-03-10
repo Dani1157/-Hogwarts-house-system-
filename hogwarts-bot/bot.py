@@ -16,7 +16,6 @@ from collections import defaultdict
 import aiohttp
 from io import BytesIO
 import time
-import time
 time.sleep(10)  # Wait 10 seconds before connecting to avoid rate limits
 
 # ==========================================
@@ -5888,19 +5887,10 @@ if __name__ == "__main__":
     import time
     
     print("🚀 Starting bot initialization...")
-    print(f"📂 Current working directory: {os.getcwd()}")
-    print(f"📁 Files in current directory: {os.listdir('.')}")
     
-    # Check if data directory exists
-    if os.path.exists('data'):
-        print(f"📁 Data directory found. Contents: {os.listdir('data')}")
-    else:
-        print("⚠️ Data directory not found, will be created")
-    
-    # Try to get token from environment variable (for Render)
+    # Get token from environment variable
     token = os.environ.get('DISCORD_TOKEN')
     
-    # If no environment variable, ask for it (for local testing)
     if not token:
         print("⚠️ No DISCORD_TOKEN environment variable found.")
         token = input("Please enter your Discord bot token: ").strip()
@@ -5911,25 +5901,12 @@ if __name__ == "__main__":
     
     print(f"✅ Token found (length: {len(token)} characters)")
     print(f"⏰ Waiting 10 seconds to avoid rate limits...")
-    time.sleep(10)
+    time.sleep(10)  # ← THIS is the right place for it
     
     try:
         print("🔄 Attempting to start bot...")
         bot.run(token)
-    except discord.errors.PrivilegedIntentsRequired:
-        print("❌ Error: Privileged Intents not enabled!")
-        print("Go to: https://discord.com/developers/applications/")
-        print("Click your bot → Bot → Enable ALL Privileged Gateway Intents")
-        sys.exit(1)
-    except discord.errors.LoginFailure:
-        print("❌ Error: Invalid token!")
-        print("Your Discord token is incorrect. Generate a new one.")
-        sys.exit(1)
     except Exception as e:
-        print(f"❌ Unexpected error: {type(e).__name__}: {e}")
-        print("\n🔍 Full traceback:")
+        print(f"❌ Error: {e}")
         traceback.print_exc()
-        print("\n📋 System info:")
-        print(f"Python version: {sys.version}")
-        print(f"Discord.py version: {discord.__version__}")
         sys.exit(1)
