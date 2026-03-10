@@ -1,3 +1,5 @@
+import asyncio
+import sys
 from discord import app_commands
 import discord
 from discord.ext import commands, tasks
@@ -138,6 +140,9 @@ bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
 # ==========================================
 @bot.event
 async def on_ready():
+    # CRITICAL: Add delay to prevent rate limiting on restart
+    await asyncio.sleep(5)
+    
     print(f'✅ {bot.user} is online!')
     print(f'📊 Connected to {len(bot.guilds)} servers')
     
@@ -145,8 +150,6 @@ async def on_ready():
     try:
         synced = await bot.tree.sync()
         print(f"🔄 Synced {len(synced)} slash commands!")
-        for cmd in synced:
-            print(f"   • /{cmd.name}")
     except Exception as e:
         print(f"❌ Error syncing commands: {e}")
     
@@ -186,7 +189,6 @@ async def on_ready():
         print("✅ Status updated!")
     except Exception as e:
         print(f"⚠️ Error setting status: {e}")
-
 # ==========================================
 # CONSTANTS & CONFIG
 # ==========================================
@@ -5791,6 +5793,7 @@ class BackToQuestsButton(Button):
     
     async def callback(self, interaction: discord.Interaction):
         await show_quests_menu(interaction, self.user_id)
+        
     # ==========================================
 # RUN THE BOT
 # ==========================================
