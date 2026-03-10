@@ -2310,12 +2310,17 @@ SPECIAL_ITEMS = {
 # ==========================================
 # DATA MANAGEMENT
 # ==========================================
+# ==========================================
+# DATA MANAGEMENT
+# ==========================================
 def load_data():
     try:
-        with open(DATA_FILE, 'r') as f:
+        # Use utf-8-sig to handle Windows BOM characters
+        with open(DATA_FILE, 'r', encoding='utf-8-sig') as f:
             return json.load(f)
     except FileNotFoundError:
-        # Create default data structure
+        # Create default data structure if file doesn't exist
+        print("📁 Data file not found, creating new one...")
         default_data = {
             'houses': {
                 'gryffindor': {'points': 0, 'weekly': 0, 'monthly': 0},
@@ -2338,14 +2343,41 @@ def load_data():
             'battle_pass': {}
         }
         return default_data
-    
+    except json.JSONDecodeError:
+        # If file is corrupted, create new one
+        print("⚠️ Data file corrupted, creating new one...")
+        default_data = {
+            'houses': {
+                'gryffindor': {'points': 0, 'weekly': 0, 'monthly': 0},
+                'slytherin': {'points': 0, 'weekly': 0, 'monthly': 0},
+                'ravenclaw': {'points': 0, 'weekly': 0, 'monthly': 0},
+                'hufflepuff': {'points': 0, 'weekly': 0, 'monthly': 0}
+            },
+            'users': {},
+            'checkins': {},
+            'history': [],
+            'duels': {},
+            'achievements': {},
+            'inventory': {},
+            'chests_opened': {},
+            'quests': {},
+            'secrets_found': {},
+            'map_access': {},
+            'spells_learned': {},
+            'classes_attended': {},
+            'battle_pass': {}
+        }
+        return default_data
 
 def save_data():
-    with open(DATA_FILE, 'w') as f:
+    # Use utf-8 without BOM for saving (cleaner for Linux)
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2)
 
+# Load the data
 data = load_data()
-# Ensure all required keys exist
+
+# Ensure all required keys exist (in case the file was missing some)
 if 'users' not in data:
     data['users'] = {}
 if 'checkins' not in data:
@@ -2354,7 +2386,24 @@ if 'history' not in data:
     data['history'] = []
 if 'duels' not in data:
     data['duels'] = {}
-# Add any other keys that might be missing
+if 'achievements' not in data:
+    data['achievements'] = {}
+if 'inventory' not in data:
+    data['inventory'] = {}
+if 'chests_opened' not in data:
+    data['chests_opened'] = {}
+if 'quests' not in data:
+    data['quests'] = {}
+if 'secrets_found' not in data:
+    data['secrets_found'] = {}
+if 'map_access' not in data:
+    data['map_access'] = {}
+if 'spells_learned' not in data:
+    data['spells_learned'] = {}
+if 'classes_attended' not in data:
+    data['classes_attended'] = {}
+if 'battle_pass' not in data:
+    data['battle_pass'] = {}
 # ==========================================
 # HELPER FUNCTIONS
 # ==========================================
