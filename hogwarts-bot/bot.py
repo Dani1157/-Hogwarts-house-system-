@@ -17,7 +17,7 @@ import aiohttp
 from io import BytesIO
 import time
 import time
-time.sleep(3)  # Wait 3 seconds before connecting to avoid rate limits
+time.sleep(10)  # Wait 10 seconds before connecting to avoid rate limits
 
 # ==========================================
 # BACKGROUND TASKS DEFINITIONS
